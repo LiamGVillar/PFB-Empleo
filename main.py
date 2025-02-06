@@ -1,1 +1,1 @@
-print "Hola chavales"
+print "Hola"
