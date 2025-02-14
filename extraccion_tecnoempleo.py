@@ -138,7 +138,7 @@ def extraer_ofertas_tecnoempleo(num_paginas=None):
     # DataFrames ofertas
     df_ofertas = pd.DataFrame(todas_las_ofertas)
 
-    # Crear columnas binarias para cada tecnología
+    # Columnas binarias para cada tecnología
     for tecnologia in todas_las_tecnologias:
         df_ofertas[tecnologia] = df_ofertas["Tecnologías"].apply(lambda x: 1 if tecnologia in x else 0)
     df_ofertas.drop(columns=["Tecnologías"], inplace=True)
