@@ -78,8 +78,8 @@ pages = {
     "Busqueda empleos" : busqueda
 }
 
-manfredimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit/imagenes/manfred.png")
-tecnoempleoimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit/imagenes/tecnoempleo.png")
+manfredimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit_test/imagenes/manfred.png")
+tecnoempleoimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit_test/imagenes/tecnoempleo.png")
 
 st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_container_width=True)
 
