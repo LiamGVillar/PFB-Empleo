@@ -19,6 +19,16 @@ def muestra_datos():
          df = pd.read_csv(filepath_or_buffer = "/home/bosser/Documentos/PROYECTOFINAL/CSV/CSV_manfred/general_limpio.csv")
          st.dataframe(df) 
 
+     # Ruta al archivo HTML generado por folium
+    ruta_html = "/home/bosser/Documentos/PROYECTOFINAL/Graficas/data/mapa_cloropletico_espana.html"
+
+    # Leer el contenido del archivo HTML
+    with open(ruta_html, "r", encoding="utf-8") as f:
+        html_content = f.read()
+
+    # Mostrar el mapa en Streamlit
+    st.components.v1.html(html_content, width=1200, height=600)
+
    
 @st.cache_data
 def load_data():
