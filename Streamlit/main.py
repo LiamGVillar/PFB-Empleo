@@ -51,7 +51,7 @@ def busqueda():
     
        
     if submit_button:
-    # Filtrar los resultados según la búsqueda
+    # Filtrar los resultados según la búsquedaaa
         df_filtrado = df[
             (df["titulo"].str.lower().str.contains(job_title, na=False)) &
             (df["Presencial"].str.lower().str.contains(location, na=False)) &
