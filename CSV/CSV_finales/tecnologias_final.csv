@@ -1,0 +1,1949 @@
+tecnologia,tec_id
+Python,1
+C++,2
+Cinema 4D,3
+CRM,4
+Canva,5
+Trello,6
+Google Analytics,7
+Adobe Photoshop,8
+Adobe Illustrator,9
+WordPress,10
+Java,11
+SQL,12
+SOAP,13
+OpenApi,14
+JavaScript,15
+Cobol,16
+C#,17
+.NET,18
+JSON,19
+Angular2+,20
+Microsoft Excel,21
+Hubspot,22
+AWS,23
+Kafka,24
+Argo CD,25
+Flux,26
+React,27
+Kotlin,28
+Swift,29
+PostgreSQL,30
+Spring,31
+Azure,32
+Kubernetes,33
+Terraform,34
+Docker,35
+Linux,36
+Git,37
+Golang,38
+Rust,39
+GitLab,40
+Django,41
+Celery,42
+Fastapi,43
+MySQL,44
+NodeJS,45
+TypeScript,46
+MVC,47
+dbt,48
+Google Cloud,49
+Airflow,50
+z/OS,51
+DB2,52
+PowerShell,53
+Bash,54
+Magento,55
+Prestashop,56
+BigCommerce,57
+Salesforce,58
+Shopify,59
+WooCommerce,60
+RabbitMQ,61
+NextJS,62
+Tailwind,63
+Jenkins,64
+Databricks,65
+Prometheus,66
+Google Sheets,67
+nestJS,68
+Vue,69
+MQTT,70
+Express,71
+Koa,72
+Spring Boot,73
+Go,74
+Bootstrap,75
+Pytest,76
+Github,77
+PHP,78
+Symfony,79
+Figma,80
+HTML,81
+CSS,82
+Jest,83
+Hibernate,84
+API,85
+WebSockets,86
+Svelte,87
+BigQuery,88
+Redux,89
+Ansible,90
+SQLServer,91
+Visual Studio,92
+REST,93
+ETL,94
+S3,95
+Redshift,96
+Snowflake,97
+Auth0,98
+Tableau,99
+IIS,100
+Pulumi,101
+Azure DevOps,102
+Laravel,103
+Yii,104
+AWS ECS,105
+Nest,106
+PySpark,107
+AWS Lambda,108
+Selenium,109
+Appium,110
+Cypress,111
+RxJS,112
+Clojure,113
+Grafana,114
+ELK,115
+Spark,116
+Jmeter,117
+Gatling,118
+Apple iOS,119
+SwiftUI,120
+XCTest,121
+UIKit,122
+Atlassian,123
+Groovy,124
+ServiceNow,125
+Ethereum,126
+Web3,127
+.Net Core,128
+Swagger,129
+Helm,130
+Datadog,131
+Kong,132
+Quarkus,133
+Vitest,134
+TestingLibrary,135
+Metabase,136
+Webpack,137
+Elasticsearch,138
+Dart,139
+Flutter,140
+Blender,141
+Ruby on Rails,142
+Citrix,143
+Windows,144
+VMWare,145
+Hyper-v,146
+Xen,147
+R,148
+Three.js,149
+MongoDB,150
+React Native,151
+Jira,152
+NoSQL,153
+Scrapy,154
+Apache Beam,155
+Nagios,156
+Zabbix,157
+DNS,158
+HTTP4s,159
+Razor,160
+Shiny,161
+Xray,162
+AWS Cloudwatch,163
+Google Ads,164
+Pipedrive,165
+Notion,166
+Monday,167
+DialogFlow,168
+GraphQL,169
+jQuery,170
+AngularJS,171
+Ionic,172
+Viper,173
+Android,174
+Slack,175
+Mocha,176
+junit4,177
+Amplitude,178
+Mixpanel,179
+DynamoDB,180
+SaaS,181
+Redis,182
+KVM,183
+Solr,184
+Flask,185
+Sklearn,186
+Google Looker Studio,187
+Scala,188
+Gitflow,189
+ASP.net,190
+Pandas,191
+Numpy,192
+Google Firebase,193
+Riverpod,194
+gRPC,195
+Protobuf,196
+PHPunit,197
+Drupal,198
+Zoho,199
+Fortran,200
+Vite,201
+TensorFlow,202
+ActiveMQ,203
+Cisco,204
+Microsoft Sharepoint,205
+Microsoft Dynamics 365,206
+Cassandra,207
+Dagger2,208
+Core Data,209
+Ruby,210
+PyTorch,211
+AWS SageMaker,212
+Oracle,213
+Microsoft Power BI,214
+Google Tag Manager,215
+Maven,216
+JUnit,217
+Blazor,218
+Microsoft,219
+javacript,220
+Sketch,221
+Adobe Xd,222
+Axure,223
+InfluxDB,224
+Flink,225
+Postman,226
+JBoss,227
+Transact-SQL (T-SQL),228
+PL/SQL,229
+Cordova,230
+BlueTooth,231
+Nuxt.js,232
+Babel,233
+Microsoft Office 365,234
+Objective-C,235
+OpenCV,236
+Jasmine,237
+Productboard,238
+Github Actions,239
+openlayers,240
+CARTO,241
+ArcGIS,242
+Leaflet,243
+Geoserver,244
+Google AdManager,245
+Google Data Studio,246
+Google Optimize,247
+Couchbase,248
+Elixir,249
+Adobe Premiere Pro,250
+Cucumber,251
+Sagas,252
+Apollo,253
+MVVM,254
+ClickHouse,255
+Micronaut Framework,256
+Airtable,257
+Asana,258
+Specflow,259
+Puppeteer,260
+Miro,261
+Backbone,262
+CMS,263
+KendoUI,264
+Adobe Suit,265
+Apache,266
+Karate,267
+PACT,268
+MariaDB,269
+TestNg,270
+AWS-User,271
+Apple macOS,272
+Microsoft Active Directory,273
+Storybook,274
+Keycloak,275
+slq-server,276
+GraalVM,277
+FlexBox,278
+Unix,279
+data-lake,280
+shell-scripting,281
+postgres,282
+rabbit,283
+reactive-programming,284
+Puppet,285
+Unity3D,286
+SAP,287
+Nginx,288
+Invision,289
+Chef,290
+Hotjar,291
+LookBack,292
+Maze,293
+Webflow,294
+CMake,295
+Qt,296
+Alfresco,297
+MapBox,298
+ChartJS,299
+Google Maps,300
+OpenGL,301
+UML,302
+Genesys,303
+SIP,304
+Vuex,305
+VanillaJS,306
+Hadoop,307
+OpenShift,308
+Hazelcast,309
+Android Studio,310
+PowerCenter,311
+Microsoft SQL Integration Services (SSIS),312
+Sass,313
+Ember,314
+Entity,315
+CodeIgniter,316
+OpenStack,317
+NgRx,318
+WPF,319
+FlaUI,320
+Gherkin,321
+Playwright,322
+SonarQube,323
+Nexus,324
+Fortinet,325
+Vagrant,326
+F5,327
+Aruba,328
+Infoblox,329
+Palo Alto,330
+Zscaler,331
+MobileIron,332
+PRTG,333
+VMware NSX,334
+WebComponents,335
+New Relic,336
+Confluence,337
+Plesk,338
+AJAX,339
+SCADA,340
+Kibana,341
+Microstrategy,342
+BI,343
+Adobe Analytics,344
+Adobe Campaign,345
+Selligent,346
+screen-scraping,347
+TestFlight,348
+Odoo,349
+WebApi,350
+RollupJS,351
+YAML,352
+Lucene,353
+RedHat,354
+Segment,355
+Facebook Ads,356
+Linkedin Ads,357
+Bitbucket,358
+Lua,359
+Zend,360
+CircleCI,361
+Serverless,362
+Zapier,363
+Apache Tomcat,364
+git-bash,365
+abb,366
+networking,367
+spi,368
+postman,369
+c/al,370
+conectividad,371
+generativa,372
+amazon web services,373
+helm,374
+microsoft d365,375
+ms project,376
+apis salesforce,377
+ecommerce,378
+sun,379
+micro,380
+workflow,381
+calidad,382
+akami waf,383
+f5,384
+tisax,385
+sage 200,386
+bpms,387
+libreoffice,388
+ngrx,389
+project management,390
+satcom,391
+puppet,392
+controles,393
+formador,394
+sap py,395
+chrome,396
+datafog,397
+dicom,398
+sapa,399
+sap hcm py,400
+switching,401
+scripting,402
+flask,403
+redhat,404
+sonido,405
+redes,406
+ethernetip,407
+tomcat,408
+services,409
+intercom,410
+duplo,411
+pacemaker,412
+basis,413
+bom,414
+fastapi,415
+silk,416
+elixir,417
+aix,418
+ddos,419
+estructura de datos,420
+ms sql,421
+qliksense,422
+eclipse,423
+gpu,424
+profinet,425
+ptes,426
+cakephp,427
+rack,428
+facebook,429
+mssql,430
+data management,431
+sap trm,432
+4g,433
+radio,434
+power platform,435
+roles fsmo,436
+javscript,437
+c# git,438
+hyperv,439
+3g,440
+flows,441
+electronica,442
+proxmox,443
+batch,444
+sap hcm,445
+i18n,446
+selenium,447
+adobe,448
+aws guarduty,449
+sap ecc,450
+redis spock,451
+keras,452
+rabbitmq,453
+after effects,454
+ssis,455
+ssas,456
+ddr dds,457
+evergreen,458
+kiwi,459
+angular python,460
+amfes,461
+beas,462
+helpdesk,463
+jdbc,464
+gestor proyectos,465
+dataflow,466
+ad,467
+grid,468
+wan,469
+azure,470
+success factors,471
+time and labor,472
+node,473
+cis,474
+cmdp,475
+meraki,476
+rsocket,477
+fx,478
+rpg,479
+norkom,480
+gpos,481
+node js,482
+django,483
+loadrunner,484
+micropilot,485
+kubernetes,486
+svn,487
+contratos,488
+delphi,489
+javа,490
+graphyco,491
+testng,492
+dataguard,493
+virtualizacion,494
+css,495
+firebase,496
+hp alm,497
+tia portal,498
+aeronautica,499
+sap sd,500
+spring html,501
+backup,502
+iatf,503
+impala,504
+kanban,505
+primekey,506
+apqp,507
+cloudera,508
+auditoria,509
+onetrust,510
+ia generativa,511
+hacking,512
+nginx,513
+open api,514
+creative cloud,515
+nosql,516
+plm,517
+sdk,518
+shopify,519
+primavera,520
+shell scripting,521
+rest api,522
+apigee,523
+omeka,524
+sass,525
+it controlling,526
+cucumber,527
+hootsuite,528
+lowcode,529
+vmware,530
+iscsi,531
+devops,532
+material design,533
+identityiq,534
+objective c,535
+blockchain,536
+desarrollo,537
+account manager,538
+rest,539
+kotlin sparkjava,540
+metabase,541
+banca,542
+nx,543
+nmap,544
+javascript,545
+racf,546
+python javascript,547
+gdpr,548
+testrail,549
+streaming,550
+arrays,551
+less,552
+indesign,553
+gestion proyectos,554
+can,555
+redux,556
+dhcp,557
+next,558
+devops jenkins,559
+magerit,560
+api rest,561
+mongo,562
+powerquery,563
+gis,564
+jadx,565
+google search console,566
+presto,567
+solaris,568
+afm,569
+assembler,570
+jcl,571
+restful,572
+datahubs,573
+database,574
+aeroespacial,575
+wiremock,576
+windows forms,577
+flashsystem,578
+soar,579
+aircall,580
+data services,581
+security governance,582
+routiing,583
+qlikview,584
+navision,585
+automatismos,586
+golang,587
+siaval,588
+vpn,589
+analisis funcional,590
+numpy,591
+circleci,592
+aso,593
+iast,594
+orms,595
+banktrade,596
+sap bw on hana,597
+internet,598
+malware,599
+bruno,600
+ccse,601
+sketch,602
+elasticsearch,603
+segurid cad,604
+microsoft 365,605
+angular,606
+sap pm,607
+idea,608
+lopd,609
+host,610
+karma,611
+psql,612
+criptografia,613
+nemesis,614
+radar,615
+tealium,616
+time tracking,617
+control de riesgos,618
+git jira,619
+abap fi,620
+calid pcb,621
+iphone,622
+fmea,623
+madcap flare,624
+virtualization,625
+ccsm,626
+salesforce,627
+typescript,628
+wildfly,629
+playwright,630
+testplan,631
+safe,632
+oracle financials,633
+sqlserver,634
+rust,635
+genesys,636
+oracle primavera unifier,637
+mikrotik,638
+hewlett packard enterprise,639
+container,640
+bash,641
+newman,642
+grc,643
+vm,644
+sap successfactors,645
+wt directory,646
+soap,647
+dwdm,648
+sap pp,649
+entrust,650
+openehr,651
+flutter,652
+spring,653
+meta business suite,654
+mysql,655
+cbtc,656
+lightning,657
+extrahop,658
+vignette,659
+py,660
+itam,661
+nist csf,662
+big data,663
+smp/e,664
+ils,665
+jasmine,666
+n1,667
+sap s/4hana,668
+emc,669
+lpic,670
+redis jooq,671
+ldap,672
+ignition,673
+dns,674
+aruba,675
+adabas,676
+jenkin,677
+junit,678
+mlops,679
+iso 22301,680
+cda,681
+directorio activo dns,682
+querys,683
+amqp,684
+router,685
+nist,686
+jmeter,687
+ethernet,688
+gravity,689
+z/os,690
+make,691
+illustrator,692
+oracle cloud financials,693
+nexus,694
+editran,695
+informix,696
+netcore,697
+altiuml,698
+vxml,699
+osb,700
+python,701
+sap srm,702
+broadcam,703
+sql,704
+cissp,705
+magento,706
+new relic,707
+ful,708
+zynq,709
+sap isu,710
+adobe suite,711
+jefe de proyecto,712
+saucelabs,713
+voip,714
+azure data factory,715
+groovy,716
+warehouse,717
+azure databricks,718
+vue.js,719
+cpu,720
+polyworks,721
+nessus,722
+ans,723
+team foundation server,724
+autodesk,725
+material ui,726
+woocommerce,727
+api,728
+mdm,729
+opencv,730
+oauth,731
+entity framework,732
+datalakes,733
+android,734
+canbus,735
+siemens,736
+rexx,737
+delta live tables,738
+power point,739
+pyspark,740
+google analytics,741
+enkins,742
+bootstrap,743
+sla,744
+snowflake,745
+ python,746
+qtest,747
+qlik,748
+ruby,749
+databricks,750
+js,751
+cad,752
+otan,753
+team management,754
+c#,755
+alm,756
+rxjs,757
+asp,758
+tag manager,759
+mmic,760
+mcp,761
+2d,762
+splunk,763
+project,764
+lambdas,765
+fanuc,766
+medios de pago,767
+datamesh,768
+fbd,769
+profibus,770
+vmax,771
+openapi,772
+contabilidad,773
+weblogic,774
+vaadin,775
+wan cisco,776
+pm,777
+ariba,778
+tecnologia,779
+ia machine learning,780
+rest api json lenguaje sql,781
+access,782
+3d,783
+dynamics fo,784
+microfocus,785
+vsphere,786
+avd,787
+webcomponents,788
+cobit,789
+sap bw,790
+optimization,791
+corel draw,792
+jwt,793
+aruba networks,794
+lifeary,795
+remedy,796
+shopify html,797
+arcmap,798
+itil,799
+graphql,800
+pega,801
+paloalto,802
+github actions,803
+rtcp,804
+solidworks,805
+qualys,806
+ssrs,807
+drupal,808
+brandwatch,809
+rrss,810
+valgrind,811
+exacc,812
+sql git,813
+sysplex,814
+zero code,815
+airflow,816
+ccna,817
+meta ads,818
+sparksql,819
+instagram,820
+odi,821
+galileo,822
+prinex,823
+wlan,824
+java,825
+sap ewm,826
+power automate,827
+api first,828
+spa,829
+i+d+i,830
+vb6,831
+itsm,832
+meta4,833
+rams,834
+visual basic,835
+bmc helix,836
+prefect,837
+openai,838
+spring batch,839
+5why,840
+process mining,841
+seguridad de la informacion,842
+jpa,843
+model driven,844
+zk,845
+prince2,846
+electronics,847
+es6,848
+office365,849
+sap cva,850
+aras innovator,851
+vna,852
+imagen,853
+navisworks,854
+windows defender,855
+nomad,856
+xray,857
+fmeca,858
+langchain,859
+aem,860
+logs,861
+stk,862
+alma,863
+traefik,864
+soc,865
+loaniq,866
+ffiec,867
+adobe campaing,868
+oracle apex,869
+ab testing,870
+microsoft dynamics,871
+sap b1,872
+springboot.,873
+cybersecurity,874
+dpia,875
+sparkjava jooq,876
+c# con asp.net,877
+colas,878
+arbor peakflow,879
+desarrollo negocio,880
+uas,881
+six sigma,882
+google cloud,883
+sap qm,884
+govsatcom,885
+fiori ui5,886
+ceo,887
+spring boot,888
+sap hybris,889
+ghidra,890
+ado,891
+gke,892
+modelos bim,893
+axon,894
+react js,895
+workspace one,896
+kql,897
+microsoft office 365,898
+rundeck,899
+tas,900
+sap security,901
+cosmos,902
+dcam,903
+cloud,904
+oauth2,905
+rest assured,906
+qa,907
+teamsuite,908
+redis,909
+scada,910
+javalin gcp,911
+abap,912
+pl/1,913
+bw,914
+gcih,915
+pki,916
+pilar,917
+rpg free,918
+git maven,919
+sap success factors,920
+auditorias,921
+swift,922
+8d,923
+c++,924
+wai aria,925
+powershell,926
+oop,927
+codesys,928
+palo alto,929
+crisc,930
+asyncapi,931
+infraestructuras,932
+edc,933
+project developer,934
+hw digital,935
+semrush,936
+mockito,937
+sap bi,938
+redmine,939
+appdynamics,940
+development,941
+arquitectura,942
+plc,943
+gemini,944
+microfrontales,945
+product owner,946
+drivers,947
+pcns,948
+synapse,949
+workforce software,950
+hl7,951
+sap wm,952
+sailpoint,953
+logstash,954
+tdd,955
+cypress,956
+lit html,957
+ios,958
+node.js,959
+pvdesign,960
+directorio activo vmware,961
+visual basic 6,962
+netrefer,963
+matlab,964
+itom,965
+microfrontends,966
+pentaho,967
+angularjs,968
+rpg ile,969
+embention,970
+lamp,971
+call manager,972
+lwc,973
+artifactory,974
+kotlin,975
+cloudwatch,976
+monitorizacion,977
+java fx,978
+fpga,979
+apache kafka,980
+aws,981
+phyton,982
+postcss,983
+red hat,984
+edr,985
+intune,986
+hive,987
+sql server,988
+dynatrace,989
+vue,990
+pl1,991
+its,992
+oscp,993
+adobe xd,994
+google tag manager,995
+web server,996
+routing,997
+as/400,998
+arm,999
+firefox,1000
+quest identity manager,1001
+dora,1002
+tic,1003
+middleware,1004
+ceh,1005
+llm,1006
+gnss,1007
+uipath,1008
+bubble,1009
+springboot,1010
+entity,1011
+github,1012
+adobe premiere pro,1013
+dam,1014
+jboss,1015
+tailwind,1016
+cypelec,1017
+hld,1018
+aplicaciones legacy,1019
+consultoria,1020
+risk management,1021
+sonar,1022
+as400,1023
+suply chain,1024
+sistemas,1025
+power bi,1026
+ arcsight,1027
+nav,1028
+listas,1029
+powercenter,1030
+atlassian,1031
+mq,1032
+ninjaone,1033
+ciam,1034
+cpm,1035
+ec2,1036
+stm,1037
+mbse,1038
+neuvector,1039
+grpc,1040
+data center,1041
+tekla,1042
+excel,1043
+glue,1044
+servidores de correo,1045
+sap btp,1046
+ubiquiti,1047
+pcb,1048
+code,1049
+rpa,1050
+backlog,1051
+iam,1052
+sdet,1053
+react.js,1054
+zephyr,1055
+arcgis,1056
+juniper,1057
+worksoft,1058
+azure synapse pyspark,1059
+ingenieria,1060
+iso 14001,1061
+amfe,1062
+spark,1063
+dynamodb,1064
+fijo,1065
+karate,1066
+centos,1067
+sst,1068
+procurve,1069
+adwords,1070
+s4 sap hana,1071
+iapp,1072
+devexpress,1073
+mulesoft,1074
+salesforce marketing cloud,1075
+stanag,1076
+pmo,1077
+sql python,1078
+arquitectura hexagonal,1079
+gdb,1080
+project manager,1081
+nlu,1082
+igi,1083
+tcp/ip,1084
+myaffiliates,1085
+xcode,1086
+proxys,1087
+ira,1088
+xunit,1089
+cassandra,1090
+firetv,1091
+ingenieria industrial,1092
+quarkus,1093
+screaming frog,1094
+php,1095
+data factory,1096
+cms,1097
+prompts,1098
+doors,1099
+civil3d,1100
+veeam,1101
+mariadb,1102
+core web api,1103
+rman,1104
+novell identity manager,1105
+newrelic,1106
+security,1107
+jenkins,1108
+exchange,1109
+stonegate,1110
+microiformatica,1111
+microservicios,1112
+jsf,1113
+bigquery,1114
+nestjs,1115
+oracle,1116
+aveva mes,1117
+analysis,1118
+peram,1119
+go,1120
+esxi,1121
+ddd,1122
+openid,1123
+appian,1124
+euspa,1125
+metalizacion,1126
+t sql,1127
+ubuntu,1128
+movilidad,1129
+entity framerowk,1130
+iis,1131
+dynatrance,1132
+gnc,1133
+erp,1134
+analisis,1135
+zookeeper,1136
+ml genia,1137
+data lake,1138
+2ee,1139
+dcs,1140
+cpd,1141
+autoconf,1142
+deep learning,1143
+mainframe,1144
+configuracion incial,1145
+an,1146
+proxies,1147
+hcd,1148
+pilas,1149
+amazon ads,1150
+aiv,1151
+asp net,1152
+apirest,1153
+active directory,1154
+jes2,1155
+skype,1156
+mac,1157
+pv elite,1158
+netbackup,1159
+inventor,1160
+azure ai,1161
+ecm,1162
+scv,1163
+apis rest,1164
+ivr,1165
+crystal reports,1166
+crm,1167
+fortigate,1168
+base de datos,1169
+jest,1170
+odoo,1171
+programacion,1172
+flyway rsocket,1173
+solid,1174
+react native,1175
+arquitectura distribuida hexagonal,1176
+nagios,1177
+bdd,1178
+office,1179
+checkpoint,1180
+hmi,1181
+orm doctrine,1182
+kafka,1183
+wintel,1184
+magnolia,1185
+shannon,1186
+sap ariba,1187
+nfs,1188
+sast,1189
+ada,1190
+hpe,1191
+opentext wem,1192
+cmdb,1193
+vrtools,1194
+microfrontend,1195
+rac,1196
+snmp,1197
+cisco,1198
+sonarqube,1199
+esa,1200
+certificacion ingles c1,1201
+bitbucket,1202
+citrix,1203
+tableau,1204
+argis,1205
+tech lead,1206
+cics jcl,1207
+cctv,1208
+iso,1209
+datasphere,1210
+proyectos it,1211
+sora,1212
+mockito api restfu,1213
+wlm,1214
+microsoft,1215
+hp nonstop,1216
+sap fi,1217
+cobol,1218
+bbdd,1219
+maven,1220
+xls,1221
+pro*c,1222
+c,1223
+sap co,1224
+6sigma,1225
+qradar,1226
+powerbuilder,1227
+sca,1228
+product manager,1229
+kiuwan,1230
+midelware,1231
+xhtml,1232
+iiss,1233
+rrhh,1234
+pulumi,1235
+cas,1236
+windpro,1237
+ux,1238
+sccm,1239
+wmware,1240
+natural,1241
+azure vmware ...,1242
+sap bpc,1243
+crypto,1244
+testing front,1245
+dwh,1246
+oim,1247
+apx,1248
+psstmm,1249
+.net core,1250
+.net,1251
+meta,1252
+seguridad,1253
+j2ee,1254
+ypress,1255
+javalin,1256
+mercado de capitales,1257
+control m,1258
+cto,1259
+program managment,1260
+design,1261
+asp 3 0,1262
+dingus,1263
+purview,1264
+burp suite,1265
+cisco unity,1266
+ciberseguridad,1267
+siemens xhq,1268
+json,1269
+apache airflow,1270
+calypso,1271
+eagle,1272
+test link,1273
+telecomunicaciones,1274
+infraestructura,1275
+jira,1276
+gitlab,1277
+podman,1278
+saltstack,1279
+jee,1280
+pwa,1281
+recm,1282
+cns,1283
+datastorage,1284
+spatialanalyzer,1285
+chef,1286
+swagger,1287
+scriptrunner,1288
+dinaymics 365,1289
+aws bedrock,1290
+veeam backup,1291
+sap fico,1292
+esatan,1293
+ssl,1294
+community manager,1295
+suse,1296
+db400,1297
+almalinux,1298
+microsoft office,1299
+pvcase,1300
+appcenter,1301
+ibm3270,1302
+esx,1303
+ai,1304
+ria,1305
+lit element,1306
+microcontroladores,1307
+cygwin,1308
+it,1309
+spm,1310
+adobe campaign,1311
+ruby on rails,1312
+gradle,1313
+fortinet,1314
+rf,1315
+k8s,1316
+capacitor,1317
+saas,1318
+ott,1319
+gmail,1320
+cyberark,1321
+bian,1322
+motherboard,1323
+datawarehouse,1324
+jbpm,1325
+bpmn,1326
+acrobat reader dc,1327
+newrelic postgresql,1328
+kubernentes,1329
+kibana,1330
+linux administration: centos,1331
+comptia,1332
+ajax,1333
+helix,1334
+google workspace,1335
+docker,1336
+kpi,1337
+vision artificial,1338
+browserstack,1339
+gps,1340
+postgresql elasticsearch,1341
+moodle,1342
+saml,1343
+yaskawa,1344
+db2,1345
+proc,1346
+nlp,1347
+spring cloud,1348
+redshift,1349
+firewall,1350
+oracle ebs,1351
+eplan,1352
+cordova,1353
+net core,1354
+netreveal,1355
+sem,1356
+sdwan,1357
+gantt,1358
+diseno web,1359
+rum,1360
+firewalls,1361
+pruebas unitarias,1362
+cypmep,1363
+google meets,1364
+ecss,1365
+html5,1366
+thetaray,1367
+ado .net,1368
+ia,1369
+qt,1370
+sto,1371
+tag,1372
+express,1373
+pam,1374
+marketing,1375
+osi,1376
+hashmaps sets.,1377
+soti,1378
+zos,1379
+csx,1380
+litografia,1381
+transformacion digital,1382
+elk,1383
+fortify,1384
+lld,1385
+hyper v,1386
+mapreduce,1387
+oracle jd edwards,1388
+catia,1389
+business central,1390
+sdlc,1391
+red team,1392
+sistemas operativos,1393
+combine,1394
+ram,1395
+polars,1396
+log,1397
+ionic,1398
+oracle forms,1399
+hcm,1400
+backup hpe,1401
+i+d,1402
+sap commerce cloud,1403
+dell,1404
+jcls,1405
+vhdl,1406
+flyway,1407
+zapier,1408
+teradata,1409
+appium,1410
+one network,1411
+cype3d,1412
+software,1413
+machine learning,1414
+blue prism,1415
+linux,1416
+phishing,1417
+apache superset,1418
+nest,1419
+webdriver,1420
+robotframework,1421
+neo4j,1422
+data science,1423
+algoritmos,1424
+erlang,1425
+movil,1426
+spc,1427
+lean,1428
+lakehouse,1429
+airtable,1430
+photosho,1431
+adobe creative suite,1432
+routers,1433
+kafk,1434
+sse,1435
+was,1436
+sap basis,1437
+mes,1438
+oci,1439
+ups,1440
+sc,1441
+collibra,1442
+power center,1443
+unittest,1444
+nuxt.js,1445
+webgl,1446
+wpf,1447
+npm,1448
+ibm security,1449
+ui/ux,1450
+pos,1451
+terrraform,1452
+emar,1453
+nextjs,1454
+double click,1455
+ens,1456
+virtual machines,1457
+servicedesk,1458
+ibm,1459
+sap netweaver,1460
+avro,1461
+office 365,1462
+sap abap,1463
+and javascript,1464
+hybris,1465
+togaf,1466
+hackathon,1467
+cognos,1468
+wasp,1469
+dlp,1470
+sap fiori,1471
+sap vim,1472
+nist2,1473
+terraform,1474
+service desk,1475
+javascrip,1476
+rack servidores,1477
+dama,1478
+ctg,1479
+marketing digital,1480
+application server,1481
+matlaby,1482
+ecmascript,1483
+u2a,1484
+iatf16949,1485
+r,1486
+restapi,1487
+cisco webex,1488
+bff,1489
+backups,1490
+solarwind,1491
+hp fortify,1492
+postresql,1493
+geomatica,1494
+talend,1495
+ot,1496
+zoho,1497
+htmx,1498
+computer vision,1499
+webapp,1500
+scrum master,1501
+safety,1502
+rasp,1503
+api restful,1504
+n2,1505
+casb,1506
+inteligencia artificial,1507
+artillery,1508
+spring framework,1509
+atm,1510
+san brocade,1511
+tibco,1512
+lan,1513
+photoshop,1514
+san,1515
+mvc,1516
+exstream,1517
+informatica,1518
+uav,1519
+hitachi,1520
+canva,1521
+tivoli,1522
+apw,1523
+servicenow,1524
+scrum,1525
+sketchup,1526
+lrba,1527
+n8n,1528
+aml,1529
+big query,1530
+tailwindcss,1531
+dgo,1532
+tsql,1533
+vcenter,1534
+webpack,1535
+wifi,1536
+network,1537
+it manager,1538
+veu,1539
+powerpoint,1540
+perl,1541
+websockets,1542
+ktor,1543
+sisnet,1544
+postgresql,1545
+cics,1546
+livewire,1547
+locust,1548
+mysql postgresql,1549
+shell,1550
+webhook,1551
+it infrastructure,1552
+cableado,1553
+cells,1554
+apache spark,1555
+apex,1556
+kaizen,1557
+foxpro,1558
+web components,1559
+ptp,1560
+linq,1561
+vuejs,1562
+pytest,1563
+netapp,1564
+mongo db,1565
+sentinel,1566
+cisco work,1567
+hibernate,1568
+webmethods,1569
+hmc,1570
+facebook ads,1571
+fiori,1572
+opensearch,1573
+pytorch,1574
+arinc,1575
+ipv4,1576
+privileged access management,1577
+5s,1578
+css3,1579
+html,1580
+ccsds,1581
+escaneo,1582
+sage,1583
+opentext,1584
+vtam,1585
+consultant,1586
+zscaler dns/proxy,1587
+sql oracle,1588
+s4hana,1589
+cia,1590
+cnc,1591
+dga,1592
+jquery,1593
+xilinx,1594
+symantec,1595
+simphony,1596
+rpgiv,1597
+alteryx,1598
+vlan,1599
+dynamics,1600
+murex fo,1601
+tuxedo,1602
+hbase,1603
+kyc,1604
+linkedin ads,1605
+pandas,1606
+vanilla,1607
+apk,1608
+qkd,1609
+zabbix,1610
+visual code,1611
+servidores,1612
+osstmm,1613
+nuxtjs,1614
+antivirus kaspersky sophos,1615
+react,1616
+openshift,1617
+spl,1618
+webforms,1619
+disaster recovery,1620
+hp,1621
+temenos,1622
+laravel,1623
+adobe creative,1624
+esri,1625
+ihe,1626
+bpc,1627
+pmp,1628
+backend,1629
+sistrix,1630
+42gears,1631
+monitoring,1632
+scorm,1633
+net,1634
+isim,1635
+wcf,1636
+transact sql server,1637
+mongodb,1638
+o365,1639
+nas,1640
+mitre,1641
+razor,1642
+teldad,1643
+aiops,1644
+i2c,1645
+gprs,1646
+adfs,1647
+prometheus,1648
+sap datasphere,1649
+cisco uccx,1650
+open id connect,1651
+camunda,1652
+sap spartacus,1653
+prestashop,1654
+flex,1655
+web api,1656
+cau,1657
+css5,1658
+soa,1659
+visualforce,1660
+omnibus,1661
+siemens nx,1662
+vmware nsx,1663
+st,1664
+fortianalyzer,1665
+symfony,1666
+windows server,1667
+j,1668
+confluence,1669
+xml,1670
+ip,1671
+gpo,1672
+iso 9001,1673
+murex,1674
+apis,1675
+industria 4 0,1676
+switchs,1677
+ads,1678
+http,1679
+successfactors,1680
+boomi,1681
+etl,1682
+microsoft dynamics 365 bc,1683
+owasp,1684
+git,1685
+boot,1686
+telefonia movil,1687
+openoffice,1688
+fhir,1689
+programmatic,1690
+emr,1691
+politicas,1692
+web3,1693
+microfocus alm,1694
+modbus,1695
+restful api,1696
+chronicle,1697
+pixhawk,1698
+jsp,1699
+switf,1700
+swing,1701
+web apis,1702
+cvs,1703
+baramundi,1704
+onedrive,1705
+testing,1706
+struts,1707
+ftth,1708
+gmao,1709
+debian,1710
+tms,1711
+workplace,1712
+google,1713
+memoq,1714
+typo3,1715
+sizmek,1716
+dpo,1717
+vitest,1718
+a2a,1719
+arinc653 apex,1720
+data quality,1721
+devsecops,1722
+rapita,1723
+cspm,1724
+workday,1725
+sap is u,1726
+mecanica,1727
+word,1728
+tipping point,1729
+antiddos,1730
+informatica data quality,1731
+directorio activo,1732
+pmbok,1733
+silver peak,1734
+partenon,1735
+wordpress,1736
+avaya,1737
+premiere pro,1738
+microsoft exchange,1739
+yocto,1740
+unix,1741
+iso27001,1742
+zoom,1743
+azure ad,1744
+cisa,1745
+flexera,1746
+query,1747
+quid,1748
+apache,1749
+web dynpro,1750
+microsoft fabric,1751
+zod,1752
+gis suit esri,1753
+fibra,1754
+sd wan,1755
+gcc,1756
+solidity,1757
+quality engineering,1758
+personio,1759
+bi,1760
+mantis,1761
+producto,1762
+ansys,1763
+formacion,1764
+hadoop,1765
+altium,1766
+reporting,1767
+shellscript,1768
+tcp,1769
+pardot,1770
+pl/sql,1771
+sap grc,1772
+c nist,1773
+mern,1774
+revit,1775
+encor,1776
+dast,1777
+switch,1778
+appbuilder,1779
+bmc remedy,1780
+gocd,1781
+canoe,1782
+oracle linux,1783
+bat,1784
+seo,1785
+robotica,1786
+ejbca,1787
+datos,1788
+m365,1789
+ga4,1790
+saviyint,1791
+gcp,1792
+b2b,1793
+opentrack,1794
+ipa,1795
+ux/ui,1796
+iot,1797
+frances,1798
+java ee,1799
+openrail,1800
+soporte,1801
+one identity safeguard,1802
+user experience,1803
+teams,1804
+sytrack,1805
+switches,1806
+uml,1807
+waf,1808
+acl,1809
+visual studio,1810
+sklearn,1811
+jooq,1812
+lambda,1813
+gitops,1814
+cisco viptela,1815
+frida,1816
+mobile,1817
+microsoft sql server,1818
+asp .net,1819
+macos,1820
+protobuf,1821
+ccnp,1822
+dynamics business central,1823
+mvp,1824
+search console,1825
+tibco datasynapse,1826
+powerbi,1827
+asp.net,1828
+ci,1829
+grafana,1830
+enterprise data catalog,1831
+bussines central,1832
+luw,1833
+wso2,1834
+digitalizacion,1835
+ccsp,1836
+zendesk,1837
+pvsyst,1838
+fullstack,1839
+google site,1840
+inteligencia artificial generativa,1841
+vite,1842
+coso,1843
+nexthink,1844
+litelement,1845
+vb net,1846
+rhel,1847
+ci/cd,1848
+cloud azure,1849
+scala,1850
+dockers,1851
+documentation,1852
+elastic,1853
+rips,1854
+comunicaciones,1855
+peoplesoft,1856
+sap,1857
+microelectronica,1858
+liferay,1859
+radiofrecuencia,1860
+siem,1861
+pfsense,1862
+windows,1863
+spss,1864
+outlook,1865
+uart,1866
+hubspot,1867
+sap mm,1868
+business intelligence,1869
+autocad,1870
+power apps,1871
+payplus,1872
+simulacion digital,1873
+infoblox,1874
+data,1875
+agile,1876
+vb,1877
+automation,1878
+dynamics 365,1879
+google bard,1880
+bpm,1881
+idq,1882
+kali,1883
+solidedge,1884
+unity,1885
+oci oracle,1886
+waterfall,1887
+sap copc,1888
+hana,1889
+cdp,1890
+google ads,1891
+snowflake & dbt,1892
+swiftui,1893
+microinformatica,1894
+redes azure,1895
+asp net mvc,1896
+burp,1897
+administration,1898
+ansible,1899
+google cloud platform,1900
+hdfs,1901
+couchbase,1902
+rockwell,1903
+xamarin,1904
+tiktok ads,1905
+ccsa,1906
+delivery manager,1907
+safeguard,1908
+opera,1909
+fortimanager,1910
+iso 27001,1911
+lin,1912
+iag,1913
+microstrategy,1914
+bim,1915
+edi,1916
+sai,1917
+prince 2,1918
+solid edge,1919
+istram,1920
+sas,1921
+ceph,1922
+reactjs,1923
+qlik sense,1924
+tso,1925
+tensorflow,1926
+zero trust,1927
+telefonia,1928
+.net framework,1929
+c/c++,1930
+websphere,1931
+patentes,1932
+openstack,1933
+hardware,1934
+pentesting,1935
+figma,1936
+cism,1937
+azure devops,1938
+sharepoint,1939
+rag,1940
+sparkjava,1941
+plsql,1942
+isae3402,1943
+analisis de datos,1944
+ticketing,1945
+sap business one,1946
+simulink,1947
+nodejs,1948
