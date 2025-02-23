@@ -19,6 +19,16 @@ def muestra_datos():
          df = pd.read_csv(filepath_or_buffer = "/home/bosser/Documentos/PROYECTOFINAL/CSV/CSV_manfred/general_limpio.csv")
          st.dataframe(df) 
 
+     # Ruta al archivo HTML generado por folium
+    ruta_html = "/home/bosser/Documentos/PROYECTOFINAL/Graficas/data/mapa_cloropletico_espana.html"
+
+    # Leer el contenido del archivo HTML
+    with open(ruta_html, "r", encoding="utf-8") as f:
+        html_content = f.read()
+
+    # Mostrar el mapa en Streamlit
+    st.components.v1.html(html_content, width=1200, height=600)
+
    
 @st.cache_data
 def load_data():
@@ -41,7 +51,7 @@ def busqueda():
     
        
     if submit_button:
-    # Filtrar los resultados según la búsqueda
+    # Filtrar los resultados según la búsquedaaa
         df_filtrado = df[
             (df["titulo"].str.lower().str.contains(job_title, na=False)) &
             (df["Presencial"].str.lower().str.contains(location, na=False)) &
@@ -78,8 +88,8 @@ pages = {
     "Busqueda empleos" : busqueda
 }
 
-manfredimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit/imagenes/manfred.png")
-tecnoempleoimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit/imagenes/tecnoempleo.png")
+manfredimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit_test/imagenes/manfred.png")
+tecnoempleoimg = Image.open("/home/bosser/Documentos/PROYECTOFINAL/Streamlit_test/imagenes/tecnoempleo.png")
 
 st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_container_width=True)
 
