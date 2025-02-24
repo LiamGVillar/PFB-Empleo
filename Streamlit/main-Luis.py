@@ -8,8 +8,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px 
 
+import base64
+from io import BytesIO
+
 
 st.set_page_config(page_title = "Empleos Extraccion", page_icon= "https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", layout ="wide")
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #a9a9a9
+;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 def pagina_principal():
     st.title("Bienvenido a la pagina de empleos de Hackaboss")
@@ -26,13 +42,28 @@ def muestra_datos():
          st.dataframe(df) 
 
      # Ruta al archivo HTML generado por folium
-    ruta_html = "/home/bosser/PFB-Empleo/mapa_cloropletico_espana.html"
+    ruta_html_provincias = "/home/bosser/PFB-Empleo/mapa_cloropletico_espana.html"
+    ruta_html_calor = "/home/bosser/PFB-Empleo/mapa_calor_ciudades.html"
+    ruta_html_comunidades = "/home/bosser/PFB-Empleo/mapa_comunidades.html"
 
-    # Leer el contenido del archivo HTML
-    with open(ruta_html, "r", encoding="utf-8") as f:
-        html_content = f.read()
 
-    # Mostrar el mapa en Streamlit
+    mapa_seleccionado = st.selectbox(
+    "Mapas:",
+    ("Ofertas de empleo por provincia", "Ofertas de empleo por ciudad", "Ofertas de empleo por comunidad autónoma")
+)
+
+#    Leer el contenido de los archivos HTML
+    if mapa_seleccionado == "Ofertas de empleo por provincia":
+        with open(ruta_html_provincias, "r", encoding="utf-8") as f:
+            html_content = f.read()
+    elif mapa_seleccionado == "Ofertas de empleo por ciudad":
+        with open(ruta_html_calor, "r", encoding="utf-8") as f:
+            html_content = f.read()
+    else:  # Mapa de comunidades
+        with open(ruta_html_comunidades, "r", encoding="utf-8") as f:
+            html_content = f.read()
+
+    # Mostrar el mapa seleccionado
     st.components.v1.html(html_content, width=1200, height=600)
 
     ####################################################
@@ -53,17 +84,17 @@ def muestra_datos():
         o.titulo, 
         tr.tec_id AS tecnologia, 
         COUNT(*) AS frecuencia,
-        t.tecnologia AS nombre_tecnologia  -- Seleccionamos el nombre de la tecnología desde la tabla "tecnologias"
+        t.tecnologia AS nombre_tecnologia
     FROM 
         ofertas o
     JOIN 
-        tecnologias_relacion tr ON o.id_oferta = tr.id_oferta  -- Unimos "ofertas" y "tecnologias_relacion" por "id_oferta"
+        tecnologias_relacion tr ON o.id_oferta = tr.id_oferta
     JOIN 
-        tecnologias t ON tr.tec_id = t.tec_id  -- Unimos "tecnologias_relacion" y "tecnologias" por "tec_id"
+        tecnologias t ON tr.tec_id = t.tec_id
     GROUP BY 
-        o.titulo, tr.tec_id, t.tecnologia  -- Agrupamos por puesto de trabajo, tecnología y nombre de la tecnología
+        o.titulo, tr.tec_id, t.tecnologia
     ORDER BY 
-        o.titulo, frecuencia DESC;  -- Ordenamos por puesto de trabajo y frecuencia
+        o.titulo, frecuencia DESC;
     """
 
     # Leer datos desde la base de datos
@@ -272,19 +303,32 @@ pages = {
     "Busqueda empleos" : busqueda
 }
 
+
 manfredimg = Image.open("/home/bosser/PFB-Empleo/Streamlit_test/imagenes/manfred.png")
 tecnoempleoimg = Image.open("/home/bosser/PFB-Empleo/Streamlit_test/imagenes/tecnoempleo.png")
 
 st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_container_width=True)
 
-# Crear dos columnas en el sidebar
+# Función para convertir imagen a base64
+def img_to_base64(image):
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode()
+
+# URLs para las imágenes
+manfred_url = "https://www.getmanfred.com/ofertas-empleo?onlyActive=false&currency=%E2%82%AC"
+tecnoempleo_url = "https://www.tecnoempleo.com/ofertas-trabajo/"
+
+# Mostrar imágenes dentro de columnas con enlaces
 col1, col2 = st.sidebar.columns(2)
 
-# Mostrar las imágenes en las columnas
 with col1:
-    st.image(manfredimg, use_container_width=True)
+    st.markdown(f'<a href="{manfred_url}" target="_blank"><img src="data:image/png;base64,{img_to_base64(manfredimg)}" width="100%"></a>', unsafe_allow_html=True)
+
+# Enlace y mostrar imagen para la columna 2 (Tecnoempleo)
 with col2:
-    st.image(tecnoempleoimg, use_container_width=True)
+    st.markdown(f'<a href="{tecnoempleo_url}" target="_blank"><img src="data:image/png;base64,{img_to_base64(tecnoempleoimg)}" width="100%"></a>', unsafe_allow_html=True)
+
 
 st.sidebar.markdown(
     "<h1 style='color: black;'>Navegación</h1>",
