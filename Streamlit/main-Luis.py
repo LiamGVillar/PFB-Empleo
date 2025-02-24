@@ -28,9 +28,9 @@ st.markdown(
 
 
 def pagina_principal():
-    st.title("Bienvenido a la pagina de empleos de Hackaboss")
-    st.subheader("Explora ofertas de empleo en España")
-    st.write("Este es un proyecto donde podras hacer una busqueda de empleos publicados recientemente")
+    st.title("Bienvenido a la página de búsqueda de empleos de Hackaboss")
+    st.subheader("Explora ofertas de empleo IT en España")
+    st.write("En este proyecto podrás ver un análisis sobre ofertas de empleo IT publicados recientemente")
 
 
 def muestra_datos():
@@ -269,7 +269,7 @@ def busqueda():
     # Filtrar los resultados según la búsquedaaa
         df_filtrado = df[
             (df["titulo"].str.lower().str.contains(job_title, na=False)) &
-            (df["Presencial"].str.lower().str.contains(location, na=False)) &
+            (df["ciudad"].str.lower().str.contains(location, na=False)) &
             (df["empresa"].str.lower().str.contains(company, na=False))
         ]
 
@@ -286,7 +286,7 @@ st.markdown(
     """
     <style>
         [data-testid="stSidebar"] {
-            background-color: lightblue !important;  /* Cambia este color */
+            background-color: #b8b8b8 !important;
         }
     </style>
     """,
@@ -334,6 +334,7 @@ st.sidebar.markdown(
     "<h1 style='color: black;'>Navegación</h1>",
     unsafe_allow_html=True
 )
+
 
 if st.sidebar.button("🏠"):
     st.session_state.page = "🏠"
