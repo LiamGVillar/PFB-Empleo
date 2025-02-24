@@ -18,7 +18,7 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-color: #a9a9a9
+        background-color: black
 ;
     }
     </style>
@@ -32,14 +32,16 @@ def pagina_principal():
     st.subheader("Explora ofertas de empleo IT en España")
     st.write("En este proyecto podrás ver un análisis sobre ofertas de empleo IT publicados recientemente")
 
+    with st.expander(label = "DataFrame - Ofertas", expanded = False):
+         df = pd.read_csv(filepath_or_buffer = "/home/bosser/PFB-Empleo/CSV/CSV_finales/ofertas_final.csv")
+         st.dataframe(df)
+
 
 def muestra_datos():
     st.title("Datos y graficas")
     st.write("Aquí podras observar patrones en las ofertas de empleo seleccionadas")
 
-    with st.expander(label = "DataFrame - Ofertas", expanded = False):
-         df = pd.read_csv(filepath_or_buffer = "/home/bosser/PFB-Empleo/CSV/CSV_finales/ofertas_final.csv")
-         st.dataframe(df) 
+     
 
      # Ruta al archivo HTML generado por folium
     ruta_html_provincias = "/home/bosser/PFB-Empleo/mapa_cloropletico_espana.html"
@@ -112,7 +114,8 @@ def muestra_datos():
 
     # Mostrar la tabla filtrada
     st.write("Tabla de tecnologías más solicitadas por puesto de trabajo:")
-    st.dataframe(df_filtered)
+    with st.expander("DataFrame"):
+        st.dataframe(df_filtered)
 
     # Graficar los resultados
     st.write("Gráfico de Tecnologías más solicitadas por puesto de trabajo:")
