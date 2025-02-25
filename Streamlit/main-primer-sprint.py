@@ -33,7 +33,7 @@ def pagina_principal():
     st.write("En este proyecto podrás ver un análisis sobre ofertas de empleo IT publicados recientemente")
 
     with st.expander(label = "DataFrame - Ofertas", expanded = False):
-         df = pd.read_csv(filepath_or_buffer = "/home/bosser/PFB-Empleo/CSV/CSV_finales/ofertas_final.csv")
+         df = pd.read_csv(filepath_or_buffer = "CSV/CSV_finales/ofertas_final.csv")
          st.dataframe(df)
 
 
@@ -44,9 +44,9 @@ def muestra_datos():
      
 
      # Ruta al archivo HTML generado por folium
-    ruta_html_provincias = "/home/bosser/PFB-Empleo/mapa_cloropletico_espana.html"
-    ruta_html_calor = "/home/bosser/PFB-Empleo/mapa_calor_ciudades.html"
-    ruta_html_comunidades = "/home/bosser/PFB-Empleo/mapa_comunidades.html"
+    ruta_html_provincias = "mapa_cloropletico_espana.html"
+    ruta_html_calor = "mapa_calor_ciudades.html"
+    ruta_html_comunidades = "mapa_comunidades.html"
 
 
     mapa_seleccionado = st.selectbox(
@@ -69,7 +69,7 @@ def muestra_datos():
     st.components.v1.html(html_content, width=1200, height=600)
 
     ####################################################
-    #Primera grafica
+    #Primera grafica/dividida
 
 
     # Conexión a la base de datos MySQL
@@ -80,8 +80,8 @@ def muestra_datos():
          password=db_config["password"],
          database=db_config["database"])
 
-    # Consulta SQL
-    query = """
+    # Consulta SQL para Tecnologías
+    query_tech = """
     SELECT 
         o.titulo, 
         tr.tec_id AS tecnologia, 
@@ -99,43 +99,68 @@ def muestra_datos():
         o.titulo, frecuencia DESC;
     """
 
+    # Consulta SQL para Habilidades
+    query_skills = """
+    SELECT 
+        o.titulo, 
+        hr.hab_id AS habilidad, 
+        COUNT(*) AS frecuencia,
+        h.habilidad AS nombre_habilidad
+    FROM 
+        ofertas o
+    JOIN 
+        habilidades_relacion hr ON o.id_oferta = hr.id_oferta
+    JOIN 
+        habilidades h ON hr.hab_id = h.hab_id
+    GROUP BY 
+        o.titulo, hr.hab_id, h.habilidad
+    ORDER BY 
+        o.titulo, frecuencia DESC;
+    """
+
     # Leer datos desde la base de datos
-    df = pd.read_sql(query, con=db)
+    df_tech = pd.read_sql(query_tech, con=db)
+    df_skills = pd.read_sql(query_skills, con=db)
 
-    # Filtrar los 10 puestos con más frecuencias de tecnologías
-    top_titulos = df.groupby("titulo")["frecuencia"].sum().sort_values(ascending=False).head(10).index
-    df_filtered = df[df["titulo"].isin(top_titulos)]
+    # Filtrar los 10 puestos con más frecuencias
+    top_titulos_tech = df_tech.groupby("titulo")["frecuencia"].sum().sort_values(ascending=False).head(10).index
+    df_tech_filtered = df_tech[df_tech["titulo"].isin(top_titulos_tech)].groupby("titulo").apply(lambda x: x.nlargest(5, "frecuencia")).reset_index(drop=True)
 
-    # Limitar a las 5 tecnologías más frecuentes por puesto de trabajo
-    df_filtered = df_filtered.groupby("titulo").apply(lambda x: x.nlargest(5, "frecuencia")).reset_index(drop=True)
+    top_titulos_skills = df_skills.groupby("titulo")["frecuencia"].sum().sort_values(ascending=False).head(10).index
+    df_skills_filtered = df_skills[df_skills["titulo"].isin(top_titulos_skills)].groupby("titulo").apply(lambda x: x.nlargest(5, "frecuencia")).reset_index(drop=True)
 
     # Configuración de la página Streamlit
-    st.title('Frecuencia de Tecnologías por Puesto de Trabajo')
+    st.title('Frecuencia de Tecnologías y Habilidades por Puesto de Trabajo')
 
-    # Mostrar la tabla filtrada
-    st.write("Tabla de tecnologías más solicitadas por puesto de trabajo:")
-    with st.expander("DataFrame"):
-        st.dataframe(df_filtered)
+    # Dividir la pantalla en dos columnas
+    col1, col2 = st.columns(2)
 
-    # Graficar los resultados
-    st.write("Gráfico de Tecnologías más solicitadas por puesto de trabajo:")
+    with col1:
+        st.subheader("Tecnologías más solicitadas")
+        with st.expander("Ver datos"):
+            st.dataframe(df_tech_filtered)
+        fig_tech = px.sunburst(df_tech_filtered, 
+                        path=["titulo", "nombre_tecnologia"], 
+                        values="frecuencia",
+                        title="Frecuencia de Tecnologías por Puesto de Trabajo",
+                        color="frecuencia",
+                        color_continuous_scale=px.colors.sequential.Turbo)
+        st.plotly_chart(fig_tech)
 
-    fig, ax = plt.subplots(figsize=(12, 6))
-    for titulo in df_filtered["titulo"].unique():
-        df_titulo = df_filtered[df_filtered["titulo"] == titulo]
-        ax.bar(df_titulo["nombre_tecnologia"], df_titulo["frecuencia"], label=titulo)
-
-    ax.set_ylabel("Frecuencia de tecnologías")
-    ax.set_xlabel("Tecnología")
-    ax.set_title("Frecuencia de tecnologías más solicitadas por puesto de trabajo")
-    ax.tick_params(axis='x', rotation=90)
-    ax.legend(title="Puestos de trabajo", bbox_to_anchor=(1.05, 1), loc="upper left")
-
-    # Mostrar la gráfica en Streamlit
-    st.pyplot(fig)
+    with col2:
+        st.subheader("Habilidades más solicitadas")
+        with st.expander("Ver datos"):
+            st.dataframe(df_skills_filtered)
+        fig_skills = px.sunburst(df_skills_filtered, 
+                        path=["titulo", "nombre_habilidad"], 
+                        values="frecuencia",
+                        title="Frecuencia de Habilidades por Puesto de Trabajo",
+                        color="frecuencia",
+                        color_continuous_scale=px.colors.sequential.Turbo)
+        st.plotly_chart(fig_skills)
 
 
-    ######################################### Mira  aver si cambias color negro (transparente o gris)
+    ######################################### Segunda grafica
 
 
     db = mysql.connector.connect(
@@ -144,7 +169,7 @@ def muestra_datos():
          password=db_config["password"],
          database=db_config["database"])
 
-    # Consulta SQL
+   # Consulta SQL
     consulta_sql = """
         SELECT 
             o.salario_desde, 
@@ -164,10 +189,10 @@ def muestra_datos():
     # Ejecutamos la consulta y leemos los datos
     df_graficas = pd.read_sql(consulta_sql, db)
 
-    # Calculamos la media de las dos columnas con información de salario:
+    # Calculamos la media de los salarios
     df_graficas["Salario medio"] = df_graficas[["salario_desde", "salario_hasta"]].mean(axis=1)
 
-    # Detectamos outliers con el método de Tukey:
+    # Detectamos outliers con el método de Tukey
     Q1 = df_graficas["Salario medio"].quantile(0.25)
     Q3 = df_graficas["Salario medio"].quantile(0.75)
     IQR = Q3 - Q1
@@ -175,32 +200,20 @@ def muestra_datos():
     limite_superior = Q3 + 1.5 * IQR
     df_graficas["Outlier Tukey"] = (df_graficas["Salario medio"] < limite_inferior) | (df_graficas["Salario medio"] > limite_superior)
 
-    # Graficamos con fondo transparente
-    plt.figure(figsize=(10, 6))
+    # Creamos el histograma interactivo
+    fig = px.histogram(df_graficas, x="Salario medio", color="Outlier Tukey",
+                    nbins=50, labels={"Salario medio": "Salario Bruto/Año"},
+                    title="Distribución de Salarios y Outliers",
+                    color_discrete_map={False: "green", True: "yellow"})
 
-    # Separamos los salarios normales y los outliers
-    salarios_normales = df_graficas[df_graficas["Outlier Tukey"] == False]["Salario medio"]
-    salarios_outliers = df_graficas[df_graficas["Outlier Tukey"] == True]["Salario medio"]
+    # Línea de la media salarial
+    media_salario = df_graficas["Salario medio"].mean()
+    fig.add_vline(x=media_salario, line_dash="dash", line_color="blue", annotation_text=f"Media: {media_salario:.2f}")
 
-    # Histograma de salarios normales y outliers
-    plt.hist(salarios_normales, bins=50, alpha=0.7, label="Normales", color="green")
-    plt.hist(salarios_outliers, bins=50, alpha=0.7, label="Outliers", color="yellow")
+    # Mostramos en Streamlit
+    st.plotly_chart(fig, use_container_width= True)
 
-    # Línea de la media
-    media_salario = np.mean(df_graficas["Salario medio"])
-    plt.axvline(media_salario, color="red", linestyle="--", linewidth=2, label=f"Media: {media_salario:.2f} Bruto/año")
-
-    # Etiquetas y título
-    plt.xlabel("Salario", fontsize=14, color='black')
-    plt.ylabel("Frecuencia", fontsize=14, color='black')
-    plt.title("Distribución de Salarios y Outliers", fontsize=16, color='black')
-    plt.legend()
-
-    # Hacer el fondo transparente al guardar la figura
-    plt.tight_layout()
-    st.pyplot(plt, use_container_width=True)
-
-###################################################
+################################################### Tercera Grafica
 
     # Creamos el gráfico de caja (box plot)
     fig = px.box(df_graficas,
@@ -221,9 +234,9 @@ def muestra_datos():
 
     # Mostrar el gráfico en Streamlit
     st.title("Análisis de Salarios por Ciudad")
-    st.plotly_chart(fig)  # Muestra el gráfico interactivo de Plotly
+    st.plotly_chart(fig, use_container_width= True)  # Muestra el gráfico interactivo de Plotly
 
-#################################################
+################################################# Cuarta grafica
 
     fig = px.scatter(df_graficas, 
                     x="experiencia", 
@@ -245,12 +258,12 @@ def muestra_datos():
 
 
     st.title("Relación entre Salario y Experiencia por Puesto de Trabajo")
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width= True)
 
    
 @st.cache_data
 def load_data():
-    return pd.read_csv("/home/bosser/PFB-Empleo/CSV/CSV_finales/ofertas_final.csv")
+    return pd.read_csv("CSV/CSV_finales/ofertas_final.csv")
 
 df = load_data()
 
@@ -307,10 +320,10 @@ pages = {
 }
 
 
-manfredimg = Image.open("/home/bosser/PFB-Empleo/Streamlit_test/imagenes/manfred.png")
-tecnoempleoimg = Image.open("/home/bosser/PFB-Empleo/Streamlit_test/imagenes/tecnoempleo.png")
+manfredimg = Image.open("Streamlit_test/imagenes/manfred.png")
+tecnoempleoimg = Image.open("Streamlit_test/imagenes/tecnoempleo.png")
 
-st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_container_width=True)
+st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_column_width=True)
 
 # Función para convertir imagen a base64
 def img_to_base64(image):
@@ -341,6 +354,7 @@ st.sidebar.markdown(
 
 if st.sidebar.button("🏠"):
     st.session_state.page = "🏠"
+    st.rerun()
 
 st.sidebar.markdown(
     """
@@ -355,7 +369,13 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-# Selector para navegar entre las demás páginas
-st.session_state.page = st.sidebar.selectbox("Selecciona una vista", list(pages.keys()), index=list(pages.keys()).index(st.session_state.page))
+
+# Selector para navegar entre páginas
+selected_page = st.sidebar.selectbox("Selecciona una vista", list(pages.keys()), index=list(pages.keys()).index(st.session_state.page))
+
+# Actualizar solo si el usuario cambia la selección en el selectbox
+if selected_page != st.session_state.page:
+    st.session_state.page = selected_page
+    st.rerun()
 
 pages[st.session_state.page]()
