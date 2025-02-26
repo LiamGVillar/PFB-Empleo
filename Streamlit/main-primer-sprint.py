@@ -7,12 +7,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px 
+import seaborn as sns
+
 
 import base64
 from io import BytesIO
 
+# URLs para las imágenes
+manfred_url = "https://www.getmanfred.com/ofertas-empleo?onlyActive=false&currency=%E2%82%AC"
+tecnoempleo_url = "https://www.tecnoempleo.com/ofertas-trabajo/"
 
-st.set_page_config(page_title = "Empleos Extraccion", page_icon= "https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", layout ="wide")
+
+st.set_page_config(page_title = "Empleos Extraccion", page_icon= "https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg",
+                    layout ="wide",
+                    initial_sidebar_state="collapsed" )
 
 st.markdown(
     """
@@ -28,20 +36,72 @@ st.markdown(
 
 
 def pagina_principal():
-    st.title("Bienvenido a la página de búsqueda de empleos de Hackaboss")
-    st.subheader("Explora ofertas de empleo IT en España")
-    st.write("En este proyecto podrás ver un análisis sobre ofertas de empleo IT publicados recientemente")
+    #Imagen superior
+    # Crear una fila con tres columnas para centrar la imagen
+    col1, col2, col3 = st.columns([1, 2, 1]) 
 
-    with st.expander(label = "DataFrame - Ofertas", expanded = False):
+    with col2:  # Solo usamos la columna central
+        st.markdown(
+            """
+            <div style="display: flex; justify-content: center;">
+                <img src="https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/620e82ff8680cd26532fff29_Logotipo%20HACK%20A%20BOSS_white%20100%20px.svg" 
+                    width="200">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    ##Titulos
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>¡Bienvenido a la página de búsqueda de empleos de Hackaboss!</h1>
+        <h3>Explora ofertas de empleo IT en España</h3>
+        <p style="font-size: 18px;">
+            -En este proyecto podrás ver un análisis sobre ofertas de empleo IT publicados recientemente-
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+    with st.expander(label = "Despliega todas las ofertas", expanded = False):
          df = pd.read_csv(filepath_or_buffer = "CSV/CSV_finales/ofertas_final.csv")
          st.dataframe(df)
 
+    # Crear 2 columnas
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("<h1 style='color: orange;'>Datos y graficas</h1>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("<h1 style='color: white;'>Busqueda y comparador de empleos</h1>", unsafe_allow_html=True)
+
+    with col1:
+        st.markdown("<h1 style='color: white;'>Informacion PBI</h1>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("<h1 style='color: orange;'>Clustering y Clasificación</h1>", unsafe_allow_html=True)
+
+    with col1:
+        st.markdown("<h1 style='color: orange;'>Arquitectura SQL</h1>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("<h1 style='color: white;'>About Us</h1>", unsafe_allow_html=True)
+
+
 
 def muestra_datos():
-    st.title("Datos y graficas")
-    st.write("Aquí podras observar patrones en las ofertas de empleo seleccionadas")
-
-     
+    st.markdown(
+    """
+    <h1 style="text-align: center;">DATOS Y GRÁFICAS 📊</h1>
+    <p style="text-align: center; font-size: 20px;">
+        -Aquí podrás observar patrones en las ofertas de empleo seleccionadas-
+    </p>
+    """,
+    unsafe_allow_html=True
+)
 
      # Ruta al archivo HTML generado por folium
     ruta_html_provincias = "mapa_cloropletico_espana.html"
@@ -160,9 +220,12 @@ def muestra_datos():
         st.plotly_chart(fig_skills)
 
 
+    st.write("Esto es una grafica de habilidades y de tecnologias")
+
+
     ######################################### Segunda grafica
 
-
+    st.title("Distribucion de salarios")
     db = mysql.connector.connect(
          host=db_config["host"],
          user=db_config["user"],
@@ -236,6 +299,8 @@ def muestra_datos():
     st.title("Análisis de Salarios por Ciudad")
     st.plotly_chart(fig, use_container_width= True)  # Muestra el gráfico interactivo de Plotly
 
+    
+
 ################################################# Cuarta grafica
 
     fig = px.scatter(df_graficas, 
@@ -260,6 +325,28 @@ def muestra_datos():
     st.title("Relación entre Salario y Experiencia por Puesto de Trabajo")
     st.plotly_chart(fig, use_container_width= True)
 
+    st.write("""
+Este gráfico analiza cómo el salario medio varía según los años de experiencia laboral. Los datos se han organizado para reflejar una secuencia lógica, 
+desde los niveles iniciales hasta los más avanzados, facilitando la identificación de tendencias clave.
+
+Eje X (horizontal):  
+Vemos el nivel de experiencia requerido en las ofertas de trabajo.  
+
+Eje Y (vertical):  
+Salario medio asociado a cada nivel, expresado en euros y dividido por 1000. Se ha realizado el cálculo de la media entre el salario más bajo y el salario más alto ofrecido en cada vacante.
+
+Se observa una correlación positiva entre experiencia y salario. Por ejemplo, quienes tienen más de 10 años de experiencia perciben un salario mayor que aquellos sin experiencia.
+
+El valor que más datos tiene es - 3 años, con 1295 muestras, y "Menos de un año" con tan solo 28, por lo que no veo una tendencia tan clara, aunque sí queda constancia.
+
+Las categorías como 3 años y 3-5 años, aunque parecidas en resultados, se representan por separado para diferenciar las ofertas de empleo que solicitan 3 años de experiencia o más de 3 años de experiencia.
+
+Después de investigar, hay ofertas en las que se piden skills más específicos y de ahí podemos apreciar la mayoría de los outliers que se muestran en la gráfica.
+
+En resumen, el gráfico confirma que la experiencia es un determinante crítico del salario, pero también destaca oportunidades para optimizar estrategias de compensación y desarrollo.
+""")
+
+
    
 @st.cache_data
 def load_data():
@@ -268,33 +355,173 @@ def load_data():
 df = load_data()
 
 def busqueda():
-    st.title("Buscar y comparar empleos")
-    st.write("Aqui puedes hacer una busqueda y comparativa de los empleos extraidos")
+    # Solucion primera al error de refresco
+    if "selected_jobs" not in st.session_state:
+        st.session_state.selected_jobs = []  
+    
+    if "df_filtrado" not in st.session_state:
+        st.session_state.df_filtrado = pd.DataFrame() 
 
-    df_filtrado = pd.DataFrame()
+    # Títulos
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>BUSCA Y COMPARA EMPLEOS 🔎</h1>
+        <h3>Explora ofertas de empleo IT en España</h3>
+        <p style="font-size: 18px;">
+            - Realiza un filtrado en la interfaz inferior para encontrar tu empleo -
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+    )
 
     # Formulario de búsqueda
-    with st.form(key='search_form'):
+    with st.form(key="search_form"):
         job_title = st.text_input("Título del trabajo", "").strip().lower()
         location = st.text_input("Ubicación", "").strip().lower()
         company = st.text_input("Empresa", "").strip().lower()
+        salario_desde, salario_hasta = st.slider(
+            "Rango de salario",
+            min_value=0,
+            max_value=200,
+            value=(0, 100),
+            step=5
+        )
+        
         submit_button = st.form_submit_button("Buscar")
-    
-       
+
     if submit_button:
-    # Filtrar los resultados según la búsquedaaa
-        df_filtrado = df[
+        # Filtrar los resultados 
+        st.session_state.df_filtrado = df[
             (df["titulo"].str.lower().str.contains(job_title, na=False)) &
             (df["ciudad"].str.lower().str.contains(location, na=False)) &
-            (df["empresa"].str.lower().str.contains(company, na=False))
+            (df["empresa"].str.lower().str.contains(company, na=False)) &
+            (df["salario_desde"] >= salario_desde) &
+            (df["salario_hasta"] <= salario_hasta)
         ]
 
-    # Mostrar resultados
-        st.write(f"Resultados para: {job_title}, {location}, {company}")
-    if not df_filtrado.empty:
-        st.dataframe(df_filtrado)
-    elif submit_button:
-        st.write("No se encontraron resultados.")
+        # Mostrar los resultados
+        st.write(f"Resultados para: {job_title} {location} {company} entre {salario_desde}K y {salario_hasta}K/€")
+        
+        if not st.session_state.df_filtrado.empty:
+            st.dataframe(st.session_state.df_filtrado)
+        else:
+            st.write("No se encontraron resultados.")
+
+    # Asegurar datos
+    if 'titulo' not in st.session_state.df_filtrado.columns:
+        st.write("") #Aseguramos que no da error al principio
+    else:
+        # Filtra los trabajos seleccionados para que coincidan con los que están disponibles en df_filtrado
+        selected_jobs = [
+            job for job in st.session_state.selected_jobs if job in st.session_state.df_filtrado["titulo"].tolist()
+        ]
+
+        # Selección múltiple
+        selected_jobs = st.multiselect(
+            "Selecciona trabajos para comparar", 
+            st.session_state.df_filtrado["titulo"].tolist(), 
+            default=selected_jobs, 
+            format_func=lambda x: f"💼 {x}"
+        )
+
+        # Solución buscada para el error de refrescar página
+        if selected_jobs != st.session_state.selected_jobs:
+            st.session_state.selected_jobs = selected_jobs
+
+        # Filtramos de nuevo el df
+        if selected_jobs:
+            df_selected = st.session_state.df_filtrado[st.session_state.df_filtrado["titulo"].isin(selected_jobs)]
+
+            # GRafica01
+            fig = px.bar(df_selected, 
+                        x="titulo", 
+                        y=["salario_desde", "salario_hasta"], 
+                        title="Comparación de Salarios de los Trabajos Seleccionados",
+                        labels={"titulo": "Trabajo", "salario_desde": "Salario Mínimo", "salario_hasta": "Salario Máximo"},
+                        barmode='group')
+
+            st.plotly_chart(fig)
+
+    
+
+
+def informacion_pbi():
+    ##Titulos
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>INFORMACION ADICIONAL CON PBI</h1>
+        <h3>Conoce mejor tu futuro empleo</h3>
+        <p style="font-size: 18px;">
+            - Navega comodamente en la interfaz y encuentra el empleo mas adecuado para tí -
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+def clustering_clasificacion():
+    ##Titulos
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>CLUSTERING Y CLASIFICACIÓN</h1>
+        <h3>Conoce mejor tu futuro empleo</h3>
+        <p style="font-size: 18px;">
+            - Navega comodamente en la interfaz y encuentra el empleo mas adecuado para tí -
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+    
+def arquitectura_sql():
+    ##Titulos
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>ARQUITECTURA SQL/h1>
+        <h3>así se ha estructurado nuestros datos</h3>
+        <p style="font-size: 18px;">
+            - Conoce la relación de nuestros datos para la extracción de información -
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+    
+
+def about_us():
+    ##Titulos
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>ABOUT US ❤️
+        <h3>¡Conócenos!</h3>
+        <p style="font-size: 18px;">
+            - Este es el equipo encargado de que puedas disfrutar de los mejores datos -
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Inyectar CSS para cambiar el color del sidebar
@@ -316,7 +543,11 @@ if 'page' not in st.session_state:
 pages = {
     "🏠" : pagina_principal,
     "Muestra de datos" : muestra_datos,
-    "Busqueda empleos" : busqueda
+    "Busqueda empleos" : busqueda,
+    "Informacion PBI" : informacion_pbi,
+    "Clustering y Clasificación" : clustering_clasificacion,
+    "Arquitectura de SQL" : arquitectura_sql,
+    "About us" : about_us
 }
 
 
@@ -331,9 +562,6 @@ def img_to_base64(image):
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
-# URLs para las imágenes
-manfred_url = "https://www.getmanfred.com/ofertas-empleo?onlyActive=false&currency=%E2%82%AC"
-tecnoempleo_url = "https://www.tecnoempleo.com/ofertas-trabajo/"
 
 # Mostrar imágenes dentro de columnas con enlaces
 col1, col2 = st.sidebar.columns(2)
