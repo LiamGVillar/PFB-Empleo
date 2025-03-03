@@ -65,30 +65,105 @@ def pagina_principal():
     unsafe_allow_html=True
 )
 
-    with st.expander(label = "Despliega todas las ofertas", expanded = False):
-         df = pd.read_csv(filepath_or_buffer = "CSV/CSV_finales/ofertas_final.csv")
-         st.dataframe(df)
+    st.write("---------------------------------------------------------------------------------------------------------------")
 
     # Crear 2 columnas
     col1, col2 = st.columns(2)
 
     with col1:
         st.markdown("<h1 style='color: orange;'>Datos y graficas</h1>", unsafe_allow_html=True)
+        st.write("""
+            En este apartado se presentan las gráficas y los datos relevantes que permiten visualizar
+            y analizar de manera clara y concisa la información recopilada.
+        """)
 
     with col2:
         st.markdown("<h1 style='color: white;'>Busqueda y comparador de empleos</h1>", unsafe_allow_html=True)
+        st.write("""
+            En este apartado se presenta una herramienta diseñada para facilitar la búsqueda y comparación de empleos,
+            permitiendo a los usuarios explorar diversas opciones laborales disponibles en el mercado. 
+        """)
 
     with col1:
         st.markdown("<h1 style='color: white;'>Informacion PBI</h1>", unsafe_allow_html=True)
+        st.write("""
+            Utilizando Power BI, este comparador presenta visualizaciones dinámicas que te ayudarán a analizar las ofertas según diferentes criterios
+                  como ubicación, salario, tipo de contrato y requisitos.
+        """)
 
     with col2:
         st.markdown("<h1 style='color: orange;'>Clustering y Clasificación</h1>", unsafe_allow_html=True)
+        st.write("""
+            En este apartado se exploran las técnicas de Clustering y Clasificación, dos enfoques clave en el análisis de datos y aprendizaje automático. 
+        """)
 
     with col1:
         st.markdown("<h1 style='color: orange;'>Arquitectura SQL</h1>", unsafe_allow_html=True)
+        st.write("""
+            Aquí se aborda la Arquitectura SQL, que es la estructura fundamental que soporta el almacenamiento, recuperación y gestión de datos en sistemas de bases de datos. 
+        """)
 
     with col2:
         st.markdown("<h1 style='color: white;'>About Us</h1>", unsafe_allow_html=True)
+        st.write("""
+            Conoce el equipo encargado de que conozcas mejor el mercado laboral que nos rodea actualmente. 
+        """)
+
+    st.write("---------------------------------------")
+
+    # Título principal
+    st.title("Opiniones de Usuarios")
+
+    # Texto introductorio
+    st.markdown("""
+        Aquí tienes algunas opiniones de nuestros usuarios. 
+        ¡Descubre lo que dicen sobre nuestra app!
+    """)
+
+    # Cuadrados de opiniones con estrellas
+    st.markdown("""
+        <style>
+            .opinion-box {
+                width: 300px;
+                height: 150px;
+                background-color: gray;
+                border-radius: 10px;
+                padding: 20px;
+                margin: 20px;
+                display: inline-block;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            .opinion-box h3 {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            .stars {
+                color: gold;
+                font-size: 20px;
+            }
+        </style>
+        
+        <div class="opinion-box">
+            <h3>Liam Gonzalez</h3>
+            <p>"Me llego el pedido frio no lo recomiendo"</p>
+            <div class="stars">⭐</div>
+        </div>
+        <div class="opinion-box">
+            <h3>Luis Martinez</h3>
+            <p>"Muy útil para analizar datos de manera rápida y efectiva."</p>
+            <div class="stars">⭐⭐⭐⭐</div>
+        </div>
+        <div class="opinion-box">
+            <h3>Raquel </h3>
+            <p>"Gran experiencia, la interfaz es muy amigable y eficiente."</p>
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+        </div>
+        <div class="opinion-box">
+            <h3>Joshua Metcalf</h3>
+            <p>"La mejor app de empleo de la historia"</p>
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+        </div>
+    """, unsafe_allow_html=True)
 
 
 
@@ -347,6 +422,11 @@ En resumen, el gráfico confirma que la experiencia es un determinante crítico 
 """)
 
 
+    st.write("-------------------------------------------------------------------------------------------------------------------------------------")
+
+    with st.expander(label = "Despliega todas las ofertas", expanded = False):
+        df = pd.read_csv(filepath_or_buffer = "CSV/CSV_finales/ofertas_final.csv")
+        st.dataframe(df)
    
 @st.cache_data
 def load_data():
@@ -409,11 +489,11 @@ def busqueda():
         else:
             st.write("No se encontraron resultados.")
 
-    # Asegurar datos
+    # Aseguramos datos
     if 'titulo' not in st.session_state.df_filtrado.columns:
         st.write("") #Aseguramos que no da error al principio
     else:
-        # Filtra los trabajos seleccionados para que coincidan con los que están disponibles en df_filtrado
+        # Filtramos los trabajos seleccionados para que coincidan con los que están disponibles en df_filtrado
         selected_jobs = [
             job for job in st.session_state.selected_jobs if job in st.session_state.df_filtrado["titulo"].tolist()
         ]
@@ -435,14 +515,17 @@ def busqueda():
             df_selected = st.session_state.df_filtrado[st.session_state.df_filtrado["titulo"].isin(selected_jobs)]
 
             # GRafica01
+            custom_colors = ["#FFA500", "#FFFFFF"]
+
             fig = px.bar(df_selected, 
                         x="titulo", 
                         y=["salario_desde", "salario_hasta"], 
                         title="Comparación de Salarios de los Trabajos Seleccionados",
                         labels={"titulo": "Trabajo", "salario_desde": "Salario Mínimo", "salario_hasta": "Salario Máximo"},
-                        barmode='group')
+                        barmode='group',
+                        color_discrete_sequence=custom_colors)
 
-            st.plotly_chart(fig)
+            st.plotly_chart(fig, use_container_width=True)
 
     
 
@@ -482,8 +565,8 @@ def arquitectura_sql():
     st.markdown(
     """
     <div style="text-align: center;">
-        <h1>ARQUITECTURA SQL/h1>
-        <h3>así se ha estructurado nuestros datos</h3>
+        <h1>ARQUITECTURA SQL<h1>
+        <h3>Así se ha estructurado nuestros datos</h3>
         <p style="font-size: 18px;">
             - Conoce la relación de nuestros datos para la extracción de información -
         </p>
@@ -491,6 +574,10 @@ def arquitectura_sql():
     """,
     unsafe_allow_html=True
 )
+    
+    st.write("---------------------------------------------")
+    
+    st.image("DIAGRAMA_SQL.drawio.png", width=900)
     
 
 def about_us():
@@ -508,11 +595,249 @@ def about_us():
     unsafe_allow_html=True
 )
     
+    st.write("-------------------------------------------------------------------------")
+    
+    col1, col2, col3, col4 = st.columns(4)
+
+    # Persona 1
+    with col1:
+        st.markdown(
+        f"""
+        <style>
+            .circle-container {{
+                text-align: center;  /* Centra todo el contenido */
+            }}
+            .circle-img {{
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+                margin: 0 auto; /* Centrar imagen */
+            }}
+            .linkedin-link {{
+                display: block;
+                margin-top: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                color: #0077b5; /* Color LinkedIn */
+            }}
+        </style>
+        <div class="circle-container">
+            <img src="https://media.licdn.com/dms/image/v2/D4D03AQHAUDedAyCf1A/profile-displayphoto-shrink_800_800/B4DZVYJI61GcAc-/0/1740940546315?e=1746662400&v=beta&t=lEhQ0eNa2gJfx0QuuKkr6Bk1mG8VIKR7IjLETdyfKQg" class="circle-img">
+            <br>
+            <a href="https://www.linkedin.com/in/liam-gonzalez-villar-2994aa248" class="linkedin-link" target="_blank">-LinkedIn-</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+        st.markdown(
+            """
+            <style>
+                .title-container {
+                    text-align: center;
+                }
+                .main-title {
+                    font-size: 40px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    color : orange;
+                }
+                .subtitle {
+                    font-size: 24px;
+                    color: gray;
+                }
+            </style>
+            <div class="title-container">
+                <p class="main-title">Liam Gonzalez Villar</p>
+                <p class="subtitle">Data Analyst</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 
+    # Persona 2
+    with col2:
+        st.markdown(
+        f"""
+        <style>
+            .circle-container {{
+                text-align: center;  /* Centra todo el contenido */
+            }}
+            .circle-img {{
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+                margin: 0 auto; /* Centrar imagen */
+            }}
+            .linkedin-link {{
+                display: block;
+                margin-top: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                color: #0077b5; /* Color LinkedIn */
+            }}
+        </style>
+        <div class="circle-container">
+            <img src="https://media.licdn.com/dms/image/v2/D4D35AQG5hLgxvtx7SA/profile-framedphoto-shrink_200_200/B4DZVYJJPyG8AY-/0/1740940547326?e=1741629600&v=beta&t=QAM6NUInIxCpraohRVAWjQE9gbK9W_6Kpm3IUQ6SZrM" class="circle-img">
+            <br>
+            <a href="https://www.linkedin.com/in/liam-gonzalez-villar-2994aa248" class="linkedin-link" target="_blank">-LinkedIn-</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
+        st.markdown(
+            """
+            <style>
+                .title-container {
+                    text-align: center;
+                }
+                .main-title-white {{
+                font-size: 40px;
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: white; /* Solo para este título */
+                }
+                .subtitle {
+                    font-size: 24px;
+                    color: gray;
+                }
+            </style>
+            <div class="title-container">
+                <p class="main-title">Luis Martínez de la Riva</p>
+                <p class="subtitle">Data Analyst</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
+    # Persona 3
+    with col3:
+        st.markdown(
+        f"""
+        <style>
+            .circle-container {{
+                text-align: center;  /* Centra todo el contenido */
+            }}
+            .circle-img {{
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+                margin: 0 auto; /* Centrar imagen */
+            }}
+            .linkedin-link {{
+                display: block;
+                margin-top: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                color: #0077b5; /* Color LinkedIn */
+            }}
+        </style>
+        <div class="circle-container">
+            <img src="https://media.licdn.com/dms/image/v2/D4D35AQG5hLgxvtx7SA/profile-framedphoto-shrink_200_200/B4DZVYJJPyG8AY-/0/1740940547326?e=1741629600&v=beta&t=QAM6NUInIxCpraohRVAWjQE9gbK9W_6Kpm3IUQ6SZrM" class="circle-img">
+            <br>
+            <a href="https://www.linkedin.com/in/raquel-barbeito-garcia-783497319/" class="linkedin-link" target="_blank">-LinkedIn-</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
+        st.markdown(
+            """
+            <style>
+                .title-container {
+                    text-align: center;
+                }
+                .main-title {
+                    font-size: 40px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    color : orange;
+                }
+                .subtitle {
+                    font-size: 24px;
+                    color: gray;
+                }
+            </style>
+            <div class="title-container">
+                <p class="main-title">Raquel Barbeito Garcia</p>
+                <p class="subtitle">Data Analyst</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # Persona 4
+    with col4:
+        st.markdown(
+        f"""
+        <style>
+            .circle-container {{
+                text-align: center;  /* Centra todo el contenido */
+            }}
+            .circle-img {{
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+                margin: 0 auto; /* Centrar imagen */
+            }}
+            .linkedin-link {{
+                display: block;
+                margin-top: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                color: #0077b5; /* Color LinkedIn */
+            }}
+        </style>
+        <div class="circle-container">
+            <img src="https://media.licdn.com/dms/image/v2/D4E03AQHHCjJEhF6yTg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1714734604277?e=1746662400&v=beta&t=UGM21u5Qnhs4G__Ih8m0nyeP15r7tP-CH54MGHFKIGI" class="circle-img">
+            <br>
+            <a href="https://www.linkedin.com/in/joshua-metcalf/" class="linkedin-link" target="_blank">-LinkedIn-</a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+        st.markdown(
+            """
+            <style>
+                .title-container {
+                    text-align: center;
+                }
+                .main-title {
+                    font-size: 40px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    color : orange;
+                }
+                .subtitle {
+                    font-size: 24px;
+                    color: gray;
+                }
+            </style>
+            <div class="title-container">
+                <p class="main-title">Joshua Metcalf</p>
+                <p class="subtitle">Data Analyst</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.write("---------------------------------------------------")
+    st.write("Somos un equipo apasionado por la innovación y el análisis de datos, comprometido con ofrecer soluciones tecnológicas que faciliten la toma de decisiones informadas. Nuestra misión es proporcionar herramientas intuitivas y poderosas que permitan a nuestros usuarios explorar, comprender y utilizar los datos de manera eficiente. Con un enfoque en la simplicidad y la eficacia, nos esforzamos por crear experiencias que transformen la forma en que las personas interactúan con la información, impulsando el éxito tanto en el ámbito profesional como personal.")
 
 
 
@@ -529,7 +854,7 @@ st.markdown(
     """
     <style>
         [data-testid="stSidebar"] {
-            background-color: #b8b8b8 !important;
+            background-color: white !important;
         }
     </style>
     """,
@@ -607,3 +932,10 @@ if selected_page != st.session_state.page:
     st.rerun()
 
 pages[st.session_state.page]()
+
+
+st.sidebar.markdown("<br>" * 12, unsafe_allow_html=True)
+st.sidebar.markdown(
+    '<p style="color: black;">App en versión de pruebas</p>',
+    unsafe_allow_html=True
+)
