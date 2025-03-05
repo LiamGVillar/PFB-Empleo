@@ -425,12 +425,12 @@ En resumen, el gráfico confirma que la experiencia es un determinante crítico 
     st.write("-------------------------------------------------------------------------------------------------------------------------------------")
 
     with st.expander(label = "Despliega todas las ofertas", expanded = False):
-        df = pd.read_csv(filepath_or_buffer = "CSV/CSV_finales/ofertas_final.csv")
+        df = pd.read_csv(filepath_or_buffer = "../CSV/CSV_finales/ofertas_final.csv")
         st.dataframe(df)
    
 @st.cache_data
 def load_data():
-    return pd.read_csv("CSV/CSV_finales/ofertas_final.csv")
+    return pd.read_csv("../CSV/CSV_finales/ofertas_final.csv")
 
 df = load_data()
 
@@ -577,7 +577,7 @@ def arquitectura_sql():
     
     st.write("---------------------------------------------")
     
-    st.image("DIAGRAMA_SQL.drawio.png", width=900)
+    st.image("../DIAGRAMA_SQL.drawio.png", width=900)
     
 
 def about_us():
@@ -876,8 +876,8 @@ pages = {
 }
 
 
-manfredimg = Image.open("Streamlit_test/imagenes/manfred.png")
-tecnoempleoimg = Image.open("Streamlit_test/imagenes/tecnoempleo.png")
+manfredimg = Image.open("../Streamlit_test/imagenes/manfred.png")
+tecnoempleoimg = Image.open("../Streamlit_test/imagenes/tecnoempleo.png")
 
 st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_column_width=True)
 
