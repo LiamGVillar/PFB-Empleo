@@ -1,0 +1,13 @@
+id,empresa,url,fecha_extraccion,titulo,oferta_activada,Presencial,Teletrabajo,vacaciones,turno_continuo,Salario_desde,Salario_hasta,Jornada
+id_man_01,durcal,https://www.getmanfred.com/ofertas-empleo/6888/durcal-senior-frontend-developer-feb25,2025-02-27_19-50-46,Senior Frontend Developer,1,BARCELONA,80,23,0,40.0,45.0,JORNADA COMPLETA
+id_man_02,mushdesk,https://www.getmanfred.com/ofertas-empleo/6884/mushdesk-shopify-developer-feb25,2025-02-27_19-50-46,Shopify Developer,1,,100,31,0,35.0,40.0,JORNADA COMPLETA FLEXIBLE
+id_man_03,durcal,https://www.getmanfred.com/ofertas-empleo/6879/durcal-node-backend-developer-feb25,2025-02-27_19-50-46,Node Backend Developer,1,BARCELONA,80,23,0,40.0,45.0,JORNADA COMPLETA
+id_man_04,dcycle,https://www.getmanfred.com/ofertas-empleo/6811/dcycle-frontend-develooper-feb25,2025-02-27_19-50-46,Product Frontend Developer,1,MADRID,40,22,1,40.0,50.0,JORNADA COMPLETA FLEXIBLE
+id_man_05,salsadev,https://www.getmanfred.com/ofertas-empleo/6887/salsadev-software-developer-feb25,2025-02-27_19-50-46,Software Developer,1,MADRID,100,23,0,40.0,50.0,JORNADA COMPLETA FLEXIBLE
+id_man_06,tymit,https://www.getmanfred.com/ofertas-empleo/6882/tymit-senior-operations-and-incident-specialist-feb25,2025-02-27_19-50-46,Senior Operations & Incident Specialist,1,,100,26,0,35.0,53.0,JORNADA COMPLETA
+id_man_07,doofinder,https://www.getmanfred.com/ofertas-empleo/6845/doofinder-software-engineer-feb25,2025-02-27_19-50-46,Software Engineer,1,MADRID,50,24,0,32.0,48.0,JORNADA COMPLETA FLEXIBLE
+id_man_08,nexthink,https://www.getmanfred.com/ofertas-empleo/6503/nexthink-product-engineer-feb25,2025-02-27_19-50-46,Product Engineer,1,MADRID,60,,0,75.0,75.0,JORNADA COMPLETA FLEXIBLE
+id_man_09,sdg,https://www.getmanfred.com/ofertas-empleo/2809/sdg-group-senior-machine-learning-engineer-feb25,2025-02-27_19-50-46,Senior Machine Learning Engineer,1,,100,25,1,70.0,70.0,JORNADA COMPLETA
+id_man_010,nuela,https://www.getmanfred.com/ofertas-empleo/6921/nuela-product-fullstack-engineer-feb25,2025-02-27_19-50-46,Senior Product FullStack Engineer,0,,100,22,1,50.0,50.0,JORNADA COMPLETA
+id_man_011,dynatrace,https://www.getmanfred.com/ofertas-empleo/337/dynatrace-javascrip-senior-developer-mar22,2025-02-27_19-50-46,JavaScript Senior Developer,0,BARCELONA,100,24,0,60.0,70.0,JORNADA COMPLETA
+id_man_012,daar,https://www.getmanfred.com/ofertas-empleo/6883/daar-shipping-junior-developer-feb25,2025-02-27_19-50-46,Junior Developer,0,,100,25,0,27.0,27.0,JORNADA COMPLETA FLEXIBLE

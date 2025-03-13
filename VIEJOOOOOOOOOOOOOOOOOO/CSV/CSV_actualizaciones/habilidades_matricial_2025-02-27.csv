@@ -1,0 +1,13 @@
+id,Resistencia a la frustración,Comunicación verbal,Capacidad de mentorización,Capacidad de dar feedback,Adaptabilidad al cambio,Visión estratégica,Proactividad,Trabajo en equipo,Liderazgo,Atención al detalle,Comunicación escrita,Pensamiento analítico,Autonomía en el aprendizaje,Capacidad de autogestión,Aprendizaje Continuo,Gestión de equipo,Visión crítica
+id_man_01,1,0,0,0,1,0,1,1,0,1,0,0,1,1,1,0,0
+id_man_02,0,1,0,1,1,0,1,1,0,0,1,0,1,0,1,0,0
+id_man_03,1,0,0,0,1,0,1,1,0,1,0,0,1,1,1,0,0
+id_man_04,0,0,0,0,0,0,1,1,0,1,0,0,0,1,1,0,0
+id_man_05,0,1,0,1,1,0,1,1,0,0,1,0,1,0,1,0,0
+id_man_06,0,1,0,0,0,1,0,1,0,0,1,1,0,0,0,0,1
+id_man_07,0,0,1,0,1,0,1,0,0,1,0,0,1,1,1,0,0
+id_man_08,0,0,1,0,0,0,0,1,0,1,0,1,1,1,0,0,0
+id_man_09,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+id_man_010,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0
+id_man_011,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,0
+id_man_012,0,0,0,0,1,0,1,1,0,1,0,0,1,1,1,0,0

@@ -8,7 +8,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px 
 import seaborn as sns
-
+import time
+import joblib
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+import pickle
+import dill
 
 import base64
 from io import BytesIO
@@ -36,34 +41,8 @@ st.markdown(
 
 
 def pagina_principal():
-    #Imagen superior
-    # Crear una fila con tres columnas para centrar la imagen
-    col1, col2, col3 = st.columns([1, 2, 1]) 
-
-    with col2:  # Solo usamos la columna central
-        st.markdown(
-            """
-            <div style="display: flex; justify-content: center;">
-                <img src="https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/620e82ff8680cd26532fff29_Logotipo%20HACK%20A%20BOSS_white%20100%20px.svg" 
-                    width="200">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    ##Titulos
-    st.markdown(
-    """
-    <div style="text-align: center;">
-        <h1>¡Bienvenido a la página de búsqueda de empleos de Hackaboss!</h1>
-        <h3>Explora ofertas de empleo IT en España</h3>
-        <p style="font-size: 18px;">
-            -En este proyecto podrás ver un análisis sobre ofertas de empleo IT publicados recientemente-
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+    
+    st.image("/home/bosser/Descargas/portada.jpg", width=1850)
 
     st.write("---------------------------------------------------------------------------------------------------------------")
 
@@ -160,7 +139,7 @@ def pagina_principal():
         </div>
         <div class="opinion-box">
             <h3>Joshua Metcalf</h3>
-            <p>"La mejor app de empleo de la historia"</p>
+            <p>"La mejor app de empleo de toda la historia."</p>
             <div class="stars">⭐⭐⭐⭐⭐</div>
         </div>
     """, unsafe_allow_html=True)
@@ -201,7 +180,7 @@ def muestra_datos():
             html_content = f.read()
 
     # Mostrar el mapa seleccionado
-    st.components.v1.html(html_content, width=1200, height=600)
+    st.components.v1.html(html_content, width=1400, height=600)
 
     ####################################################
     #Primera grafica/dividida
@@ -295,142 +274,392 @@ def muestra_datos():
         st.plotly_chart(fig_skills)
 
 
-    st.write("Esto es una grafica de habilidades y de tecnologias")
+    st.write("Esta es una gráfica comparativa que muestra la frecuencia de tecnología, a la izquierda y habilidades a la derecha,"
+    " asociadas a distintos puestos de trabajo. En la parte de la leyenda podemos ver los colores de la frecuencia relativa que va desde 10 a 30  para poder visualizar qué tecnologías y habilidades sin más recurrentes en ofertas laborales. su claridad.")
 
+    ####################################################Primeragrafica B
+
+    import plotly.graph_objects as go
+    consulta_habilidades = """
+    SELECT 
+        h.habilidad,
+        COUNT(hr.id_oferta) AS demanda,
+        AVG((o.salario_desde + o.salario_hasta)/2) AS salario_promedio
+    FROM habilidades_relacion hr
+    JOIN habilidades h ON hr.hab_id = h.hab_id
+    JOIN ofertas o ON hr.id_oferta = o.id_oferta
+    WHERE o.salario_desde IS NOT NULL 
+    AND o.salario_hasta IS NOT NULL
+    GROUP BY h.habilidad
+    ORDER BY demanda DESC
+    LIMIT 10;
+    """
+
+    consulta_tecnologias = """
+    SELECT 
+        t.tecnologia,
+        COUNT(tr.id_oferta) AS demanda,
+        AVG((o.salario_desde + o.salario_hasta)/2) AS salario_promedio
+    FROM tecnologias_relacion tr
+    JOIN tecnologias t ON tr.tec_id = t.tec_id
+    JOIN ofertas o ON tr.id_oferta = o.id_oferta
+    GROUP BY t.tecnologia
+    ORDER BY demanda DESC
+    LIMIT 10;
+    """
+
+    # Cargar datos
+    df_tech = pd.read_sql(consulta_tecnologias, db)
+    df_hab = pd.read_sql(consulta_habilidades, db)
+
+    # Crear subplots
+    fig = make_subplots(rows=1, cols=2, 
+                        subplot_titles=("Top 10 Tecnologías Demandadas", "Top 10 Habilidades Demandadas"),
+                        horizontal_spacing=0.2)
+
+    # Gráfico de Tecnologías
+    fig.add_trace(go.Bar(
+        x=df_tech["tecnologia"],
+        y=df_tech["demanda"],
+        marker=dict(color=df_tech["salario_promedio"], coloraxis="coloraxis"),
+        name="Tecnologías",
+    ), row=1, col=1)
+
+    # Gráfico de Habilidades
+    fig.add_trace(go.Bar(
+        x=df_hab["habilidad"],
+        y=df_hab["demanda"],
+        marker=dict(color=df_hab["salario_promedio"], coloraxis="coloraxis"),
+        name="Habilidades",
+    ), row=1, col=2)
+
+    # Configuración de color y leyenda
+    fig.update_layout(
+        coloraxis=dict(colorscale="Viridis", colorbar=dict(
+            title="Salario Promedio (€)",  
+            titleside="top",
+            ticksuffix=" €"
+        )),
+        showlegend=False  # Oculta la leyenda normal, ya que el color representa el salario
+    )
+
+    # Mostrar el gráfico en Streamlit
+    st.title("Comparativa de Tecnologías y Habilidades Demandadas")
+    st.plotly_chart(fig)
+
+    st.write("Estos gráficos de barras comparan las 10 tecnologías y habilidades más demandadas en el mercado laboral,"
+    " mostrando tanto la cantidad de ofertas disponibles como el salario asociado a cada una. En el apartado de tecnologías,"
+    " **Python** se posiciona como la más solicitada, mientras que **AWS** destaca por ofrecer los salarios más altos."
+    " En cuanto a habilidades, la **proactividad** es la más demandada junto con trabajo en equipo, mientras que **programador**,"
+    " es la menos solicitada y con menor remuneración. ")
 
     ######################################### Segunda grafica
 
-    st.title("Distribucion de salarios")
-    db = mysql.connector.connect(
-         host=db_config["host"],
-         user=db_config["user"],
-         password=db_config["password"],
-         database=db_config["database"])
-
-   # Consulta SQL
-    consulta_sql = """
+    consulta_top_niveles = """
+    WITH top_niveles AS (
         SELECT 
-            o.salario_desde, 
-            o.salario_hasta, 
-            c.ciudad,
-            o.experiencia
-        FROM 
-            ofertas o
-        JOIN 
-            ciudades c ON o.id_oferta = c.id_oferta
-        JOIN 
-            ciudades_coordenadas cc ON c.ciudad = cc.ciudad
-        WHERE 
-            cc.pais = 'España';
+            nivel_profesional,
+            COUNT(id_oferta) AS total_ofertas
+        FROM ofertas
+        WHERE nivel_profesional IS NOT NULL
+        GROUP BY nivel_profesional
+        ORDER BY total_ofertas DESC
+        LIMIT 2
+    )
+    SELECT 
+        o.salario_desde,
+        o.salario_hasta,
+        o.nivel_profesional,
+        CASE
+            WHEN o.experiencia IN ('Más de 10 años', 'Más de 5 años') THEN 'Más de 5 años'
+            WHEN o.experiencia IN ('3-5 años', '3 años', '2 años') THEN '2-5 años'
+            ELSE 'Menos de 2 años'
+        END AS experiencia_agrupada
+    FROM ofertas o
+    JOIN top_niveles tn ON o.nivel_profesional = tn.nivel_profesional
+    WHERE o.salario_desde IS NOT NULL
+    AND o.salario_hasta IS NOT NULL
+    AND o.experiencia IS NOT NULL;
     """
 
-    # Ejecutamos la consulta y leemos los datos
-    df_graficas = pd.read_sql(consulta_sql, db)
+    # Cargar datos
+    df = pd.read_sql(consulta_top_niveles, db)
 
-    # Calculamos la media de los salarios
-    df_graficas["Salario medio"] = df_graficas[["salario_desde", "salario_hasta"]].mean(axis=1)
+    # Calcular salario bruto anual
+    df["Salario bruto anual"] = df[["salario_desde", "salario_hasta"]].mean(axis=1)
 
-    # Detectamos outliers con el método de Tukey
-    Q1 = df_graficas["Salario medio"].quantile(0.25)
-    Q3 = df_graficas["Salario medio"].quantile(0.75)
-    IQR = Q3 - Q1
-    limite_inferior = Q1 - 1.5 * IQR
-    limite_superior = Q3 + 1.5 * IQR
-    df_graficas["Outlier Tukey"] = (df_graficas["Salario medio"] < limite_inferior) | (df_graficas["Salario medio"] > limite_superior)
+    # Crear el gráfico con leyenda mejorada
+    fig = px.histogram(
+        df,
+        x="Salario bruto anual",
+        facet_row="nivel_profesional",
+        color="experiencia_agrupada",
+        nbins=30,
+        labels={
+            "Salario bruto anual": "Salario Bruto Anual (en miles de €)",
+            "count": "Número de ofertas",
+            "experiencia_agrupada": "Años de experiencia requeridos"
+        },
+        title="Distribución Salarial por Nivel Profesional y Experiencia",
+        category_orders={
+            "nivel_profesional": df["nivel_profesional"].value_counts().index.tolist(),
+            "experiencia_agrupada": ["Menos de 2 años", "2-5 años", "Más de 5 años"]
+        },
+        color_discrete_map={
+            "Menos de 2 años": "#1f77b4",
+            "2-5 años": "#ff7f0e",
+            "Más de 5 años": "#2ca02c"
+        },
+        barmode="group",
+        opacity=0.9,
+        height=800
+    )
 
-    # Creamos el histograma interactivo
-    fig = px.histogram(df_graficas, x="Salario medio", color="Outlier Tukey",
-                    nbins=50, labels={"Salario medio": "Salario Bruto/Año"},
-                    title="Distribución de Salarios y Outliers",
-                    color_discrete_map={False: "green", True: "yellow"})
+    # Personalizar la leyenda
+    fig.update_layout(
+        legend=dict(
+        title=dict(
+            text="Años de experiencia:",  
+            font=dict(color='black')  
+        ),
+            orientation="v",
+            yanchor="top",
+            xanchor="right",
+            y=1.02,
+            x=1.15,
+            bgcolor='rgba(255,255,255,0.9)',
+            font=dict(color='black')
+        ),
+        hovermode="x unified",
+        bargap=0.15,
+        xaxis_title="Salario Bruto Anual (€)",
+        yaxis_title="Número de ofertas"
+    )
 
-    # Línea de la media salarial
-    media_salario = df_graficas["Salario medio"].mean()
-    fig.add_vline(x=media_salario, line_dash="dash", line_color="blue", annotation_text=f"Media: {media_salario:.2f}")
+    # Ajustes adicionales
+    fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    fig.update_yaxes(matches=None, showticklabels=True)
+    fig.update_traces(
+        hovertemplate="<b>Rango salarial:</b> %{x}€<br><b>Ofertas:</b> %{y}"
+    )
 
-    # Mostramos en Streamlit
-    st.plotly_chart(fig, use_container_width= True)
+    # Mostrar el gráfico en Streamlit
+    st.title("Distribución Salarial por Nivel Profesional y Experiencia")
+    st.plotly_chart(fig)
+    
+    st.write("La mayor concentración de ofertas laborales corresponde a perfiles de Empleado con experiencia media (2-5 años) y rangos salariales de 30.000-39.000€ anuales. Para posiciones junior (sin experiencia requerida), el grueso de oportunidades se concentra en la franja de 20.000-29.000€, evidenciando una correlación directa entre años de experiencia y nivel retributivo en el mercado laboral analizado.")
 
 ################################################### Tercera Grafica
 
     # Creamos el gráfico de caja (box plot)
-    fig = px.box(df_graficas,
-                x="ciudad",
-                y="Salario medio",
-                title="Distribución de Salarios por Ciudad",
-                labels={"ciudad": "Ciudad", "Salario medio": "Salario Medio"},
-                color="ciudad",  # Se usa la columna 'ciudad' para colorear
-                boxmode="group"
-                )
+    import plotly.graph_objects as go
+    consulta_sql = """
+    SELECT 
+        c.ciudad,
+        (o.salario_desde + o.salario_hasta) / 2 AS salario_promedio
+    FROM ofertas o
+    INNER JOIN ciudades c ON o.id_oferta = c.id_oferta
+    INNER JOIN ciudades_coordenadas cc ON c.ciudad = cc.ciudad
+    WHERE cc.pais = 'España'
+    AND o.salario_desde IS NOT NULL 
+    AND o.salario_hasta IS NOT NULL
+    AND c.ciudad IN (
+        SELECT c2.ciudad
+        FROM ciudades c2
+        INNER JOIN ofertas o2 ON c2.id_oferta = o2.id_oferta
+        GROUP BY c2.ciudad
+        HAVING COUNT(*) > 3
+    );
+    """
 
-    # Actualizamos el diseño del gráfico
-    fig.update_layout(
-        xaxis_title="Comunidad Autónoma",
-        yaxis_title="Salario Medio",
-        xaxis_tickangle=-45  # Rotamos las etiquetas de las comunidades o ciudades
+    df = pd.read_sql(consulta_sql, db)
+    ciudades = df['ciudad'].unique().tolist()
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Box(
+            x=df['ciudad'],
+            y=df['salario_promedio'],
+            visible=True,
+            name='Todas'
+        )
     )
 
-    # Mostrar el gráfico en Streamlit
-    st.title("Análisis de Salarios por Ciudad")
-    st.plotly_chart(fig, use_container_width= True)  # Muestra el gráfico interactivo de Plotly
+    for ciudad in ciudades:
+        df_ciudad = df[df['ciudad'] == ciudad]
+        fig.add_trace(
+            go.Box(
+                x=df_ciudad['ciudad'],
+                y=df_ciudad['salario_promedio'],
+                visible=False,
+                name=ciudad
+            )
+        )
 
+    botones = []
+    botones.append({
+        'label': 'Todas las ciudades',
+        'method': 'update',
+        'args': [{'visible': [True] + [False]*len(ciudades)}]
+    })
+
+    for i, ciudad in enumerate(ciudades):
+        visibilidad = [False]*(len(ciudades)+1)
+        visibilidad[i+1] = True
+        
+        botones.append({
+            'label': ciudad,
+            'method': 'update',
+            'args': [{'visible': visibilidad}]
+        })
+
+    fig.update_layout(
+        updatemenus=[{
+            'buttons': botones,
+            'direction': 'down',
+            'showactive': True,
+            'x': 0.5,
+            'xanchor': 'center',
+            'y': 1.15,
+            'yanchor': 'top'
+        }],
+        title='Distribución de salarios por ciudad',
+        showlegend=False,
+        xaxis_title='Ciudad',
+        yaxis_title='Salario Promedio (€)'
+    )
+
+    st.title("Análisis de Salarios por Ciudad")
+    st.plotly_chart(fig)
+
+    
+    st.write("En esta gráfica con desplegable, podemos ver con detalle la distribución de salarios por ciudad. Destacan algunas ciudades como Álava y Bizkaia con una gran cantidad de ofertas. Madrid y Barcelona se caracterizan por tener ofertas con salarios con unos sueldos mayores, fuera de los datos normales.")
     
 
 ################################################# Cuarta grafica
 
-    fig = px.scatter(df_graficas, 
-                    x="experiencia", 
-                    y="Salario medio", 
-                    color="experiencia",  
-                    title="Relación entre Salario y Experiencia por Puesto de Trabajo",
-                    labels={"experiencia": "Experiencia (años)", "Salario medio": "Salario Medio (€)"},
-                    color_continuous_scale="Set1",  
-                    template="plotly",  
-                    )
+    st.title("Análisis de Salarios por tecnología y experiencia")
+    query = """
+    WITH top_tecnologias AS (
+        SELECT 
+            t.tecnologia,
+            COUNT(*) AS num_ofertas
+        FROM tecnologias_relacion tr
+        JOIN tecnologias t ON tr.tec_id = t.tec_id
+        JOIN ofertas o ON tr.id_oferta = o.id_oferta
+        WHERE o.salario_desde IS NOT NULL 
+        AND o.salario_hasta IS NOT NULL
+        AND o.experiencia IS NOT NULL
+        GROUP BY t.tecnologia
+        ORDER BY num_ofertas DESC
+        LIMIT 5
+    )
+    SELECT 
+        t.tecnologia AS Tecnologia,
+        (o.salario_desde + o.salario_hasta) / 2 AS Salario,
+        CASE
+            WHEN o.experiencia IN ('Más de 10 años', 'Más de 5 años') THEN 'Más de 5 años'
+            WHEN o.experiencia IN ('3-5 años', '3 años', '2 años') THEN 'Entre 2 y 5 años'
+            WHEN o.experiencia IN ('1 año', 'Menos de un año', 'Sin Experiencia') THEN 'Menos de 2 años'
+            ELSE 'Otros'
+        END AS Experiencia_agrupada
+    FROM tecnologias_relacion tr
+    JOIN tecnologias t ON tr.tec_id = t.tec_id
+    JOIN ofertas o ON tr.id_oferta = o.id_oferta
+    JOIN top_tecnologias tt ON t.tecnologia = tt.tecnologia
+    WHERE o.salario_desde IS NOT NULL 
+    AND o.salario_hasta IS NOT NULL
+    AND o.experiencia IS NOT NULL;
+    """
 
+    # Ejecutar la consulta y obtener los resultados en un DataFrame de pandas
+    df_boxplot = pd.read_sql(query, db)
 
-    fig.update_layout(
-        xaxis_title="Experiencia (años)",
-        yaxis_title="Salario Medio (€)",
-        title="Relación entre Salario y Experiencia por Puesto de Trabajo",
-        legend_title="Puesto de Trabajo",  
+    # Definir el orden de las categorías agrupadas
+    orden_experiencia = ["Más de 5 años", "Entre 2 y 5 años", "Menos de 2 años"]
+
+    # Crear el gráfico de boxplot con Plotly
+    fig = px.box(
+        df_boxplot,
+        x="Experiencia_agrupada",
+        y="Salario",
+        color="Tecnologia",
+        title="Distribución de Salarios por Tecnología y Experiencia",
+        labels={"Salario": "Salario (€)", "Experiencia_agrupada": "Años de Experiencia"},
+        category_orders={"Experiencia_agrupada": orden_experiencia}
     )
 
+    # Personalizar el layout del gráfico
+    fig.update_layout(
+        xaxis_title="Años de experiencia",
+        yaxis_title="Salario (en miles de €)",
+        legend_title="Tecnología",
+        boxmode="group"  # Agrupar los boxplots por categoría de experiencia
+    )
 
-    st.title("Relación entre Salario y Experiencia por Puesto de Trabajo")
-    st.plotly_chart(fig, use_container_width= True)
+    # Mostrar el gráfico en Streamlit
+    st.plotly_chart(fig)
 
-    st.write("""
-Este gráfico analiza cómo el salario medio varía según los años de experiencia laboral. Los datos se han organizado para reflejar una secuencia lógica, 
-desde los niveles iniciales hasta los más avanzados, facilitando la identificación de tendencias clave.
 
-Eje X (horizontal):  
-Vemos el nivel de experiencia requerido en las ofertas de trabajo.  
+    st.write("El diagrama de caja muestra la relación entre tecnologías clave (Azure, Python, SQL, SAP EWM, Peoplesoft), niveles de experiencia (eje x) y distribución salarial (eje y). Peoplesoft, software de gestión empresarial y recursos humanos, presenta los salarios más altos en roles senior (+5 años), mientras que Azure destaca en posiciones junior (<2 años). Los rangos salariales son homogéneos en experiencia media,evidenciando una correlación directa entre años de experiencia exigidos y remuneración ofertada.")
 
-Eje Y (vertical):  
-Salario medio asociado a cada nivel, expresado en euros y dividido por 1000. Se ha realizado el cálculo de la media entre el salario más bajo y el salario más alto ofrecido en cada vacante.
 
-Se observa una correlación positiva entre experiencia y salario. Por ejemplo, quienes tienen más de 10 años de experiencia perciben un salario mayor que aquellos sin experiencia.
+################################################################################GRAFICO QUINTO
 
-El valor que más datos tiene es - 3 años, con 1295 muestras, y "Menos de un año" con tan solo 28, por lo que no veo una tendencia tan clara, aunque sí queda constancia.
+    consulta = """
+    SELECT 
+        empresa,
+        COUNT(id_oferta) AS numero_puestos,
+        SUM(cvs_inscritos) AS total_candidatos,
+        SUM(cvs_inscritos) AS candidatos_por_puesto
+    FROM ofertas
+    GROUP BY empresa
+    ORDER BY numero_puestos DESC
+    LIMIT 10;
+    """
 
-Las categorías como 3 años y 3-5 años, aunque parecidas en resultados, se representan por separado para diferenciar las ofertas de empleo que solicitan 3 años de experiencia o más de 3 años de experiencia.
+    df = pd.read_sql(consulta, db)
+    df = df[df["empresa"] != "nuestra política al respecto"]
 
-Después de investigar, hay ofertas en las que se piden skills más específicos y de ahí podemos apreciar la mayoría de los outliers que se muestran en la gráfica.
+    st.title("Relación entre Candidatos y Puestos por Empresa")
 
-En resumen, el gráfico confirma que la experiencia es un determinante crítico del salario, pero también destaca oportunidades para optimizar estrategias de compensación y desarrollo.
-""")
+    fig = px.bar(df,
+                x="total_candidatos",
+                y="empresa",
+                orientation='h',
+                color="numero_puestos",
+                title="Relación entre candidatos y puestos por empresa",
+                labels={
+                    'total_candidatos': 'Total candidatos inscritos',
+                    'empresa': '',
+                    'numero_puestos': 'Número de puestos'
+                })
 
+    fig.update_layout(
+        yaxis={'categoryorder': 'total ascending'},
+        coloraxis_colorbar=dict(
+            title="Puestos ofertados", 
+            title_side="top"
+        )
+    )
+
+    st.plotly_chart(fig)
+
+    st.write("El análisis de competitividad laboral revela una marcada disparidad en las oportunidades de acceso: "
+    "Michel Page, líder en oferta con 620 vacantes, presenta un ratio de 1,4% de éxito (44.285 candidatos),"
+    " mientras que en el extremo inferior (168 vacantes/4.058 candidatos) la probabilidad alcanza el 4,14%, cuadruplicando las opciones."
+    " Estos datos evidencian mayor presión selectiva en empresas con amplia oferta frente a mercados nicho con menor competencia,"
+    " subrayando la necesidad de estrategias diferenciadoras para candidatos y políticas de contratación basadas en datos.")
 
     st.write("-------------------------------------------------------------------------------------------------------------------------------------")
 
     with st.expander(label = "Despliega todas las ofertas", expanded = False):
-        df = pd.read_csv(filepath_or_buffer = "../CSV/CSV_finales/ofertas_final.csv")
+        df = pd.read_csv(filepath_or_buffer = "CSV/CSV_finales/ofertas_final.csv")
         st.dataframe(df)
    
 @st.cache_data
 def load_data():
-    return pd.read_csv("../CSV/CSV_finales/ofertas_final.csv")
+    return pd.read_csv("CSV/CSV_finales/ofertas_final.csv")
 
 df = load_data()
 
@@ -535,22 +764,7 @@ def informacion_pbi():
     st.markdown(
     """
     <div style="text-align: center;">
-        <h1>INFORMACION ADICIONAL CON PBI</h1>
-        <h3>Conoce mejor tu futuro empleo</h3>
-        <p style="font-size: 18px;">
-            - Navega comodamente en la interfaz y encuentra el empleo mas adecuado para tí -
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-def clustering_clasificacion():
-    ##Titulos
-    st.markdown(
-    """
-    <div style="text-align: center;">
-        <h1>CLUSTERING Y CLASIFICACIÓN</h1>
+        <h1>INFORMACION ADICIONAL CON PBI 📊</h1>
         <h3>Conoce mejor tu futuro empleo</h3>
         <p style="font-size: 18px;">
             - Navega comodamente en la interfaz y encuentra el empleo mas adecuado para tí -
@@ -560,12 +774,129 @@ def clustering_clasificacion():
     unsafe_allow_html=True
 )
     
+    powerbi_width = 600
+    powerbi_height = 373.5
+    st.markdown(body = f'<iframe title="Proyecto Final" width="{1400}" height="{850}" src="https://app.powerbi.com/view?r=eyJrIjoiOWQ5NzJkZWEtZjAwZS00MDY4LThhMmUtNDg3ZDJhODFkYTI0IiwidCI6IjVlNzNkZTM1LWU4MjUtNGVkNS1iZTIyLTg4NTYzNTI3MDkxZSIsImMiOjl9&pageName=2c80c0101e4ee066730c" frameborder="0" allowFullScreen="true"></iframe>', unsafe_allow_html=True)
+
+def clustering_clasificacion():
+    ##Titulos
+    st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>CLUSTERING Y CLASIFICACIÓN 🌐</h1>
+        <h3>Conoce mejor tu futuro empleo</h3>
+        <p style="font-size: 18px;">
+            - Navega comodamente en la interfaz y encuentra el empleo mas adecuado para tí -
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+    
+    # Cargar los DataFrames
+    df_general_cluster = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/presentacion/df_imputado_final_clusterizado.csv")
+    df_cluster = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/presentacion/df_clusters.csv")
+    colores = {
+        0: "rgba(46, 139, 87, 0.5)",
+        1: "rgba(191, 0, 255, 1)",
+        2: "rgba(255, 100, 0, 1)"
+    }
+    st.markdown(
+        """
+        <h1 style="text-align: center;">CLASIFICACIÓN DE OFERTAS ☁️</h1>
+        <p style="text-align: center; font-size: 20px;">
+            -Echa un vistazo a nuestro estudio de clustering sobre las ofertas de empleo en nuestra base de datos-
+        </p>
+        """,
+        unsafe_allow_html=True
+    )
+    # Inicializar el estado de sesión si no existe
+    if "show_original" not in st.session_state:
+        st.session_state.show_original = True  # Mostrar el DataFrame original al inicio
+    if "df_to_show" not in st.session_state:
+        st.session_state.df_to_show = df_cluster  # DataFrame a mostrar (original o ordenado)
+    if "show_cluster_counts" not in st.session_state:
+        st.session_state.show_cluster_counts = False  # Controlar si se muestran los conteos de clusters
+    if "show_dbscan_plot" not in st.session_state:
+        st.session_state.show_dbscan_plot = False  # Controlar si se muestra la gráfica de DBSCAN
+    if "show_mean_comparison" not in st.session_state:
+        st.session_state.show_mean_comparison = False  # Controlar si se muestra la comparación de medias
+    # Mostrar el DataFrame original solo si show_original es True
+    if st.session_state.show_original:
+        st.write("Comprobación con diferentes EPS para obtención del mejor cluster")
+        st.dataframe(df_cluster)
+    # Botón para ordenar el DataFrame por el Silhouette Score de mayor a menor
+    if st.button("Obtener mejores EPS"):
+        df_ordenado = df_cluster.sort_values(by="silhouette_score", ascending=False)
+        st.session_state.df_to_show = df_ordenado
+        st.session_state.show_original = False
+        st.session_state.show_cluster_counts = True
+    # Mostrar el DataFrame ordenado y la gráfica de conteo de clusters
+    if not st.session_state.show_original and st.session_state.show_cluster_counts:
+        col1, col2 = st.columns([2, 2])
+        with col1:
+            st.markdown("<h3 style='text-align: center;'>Revisión del EPS más adecuado para clasificación</h3>", unsafe_allow_html=True)
+            st.dataframe(st.session_state.df_to_show)
+        with col2:
+            st.markdown("<h3 style='text-align: center;'>Clusters resultantes tras escoger el mejor EPS", unsafe_allow_html=True)
+            cluster_counts = df_general_cluster["Cluster"].value_counts()
+            fig = go.Figure()
+            for cluster, count in cluster_counts.items():
+                fig.add_trace(go.Bar(
+                    x=[cluster],
+                    y=[count],
+                    name=f"Cluster {cluster}",
+                    marker_color=colores.get(cluster, "rgba(128, 128, 128, 1)")
+                ))
+            fig.update_layout(title="Conteo de Clusters", xaxis_title="Cluster")
+            st.plotly_chart(fig)
+    # Botón para mostrar la gráfica de DBSCAN
+    if st.button("Clasificación con DBSCAN"):
+        st.session_state.show_dbscan_plot = True
+    # Mostrar la gráfica de DBSCAN
+    if st.session_state.get("show_dbscan_plot", False):
+        st.markdown("<h3 style='text-align: center;'>Visualización de los clusters generados por DBSCAN:</h3>", unsafe_allow_html=True)
+        df_general_cluster['Cluster'] = df_general_cluster['Cluster'].astype('category')
+        fig_dbscan = px.scatter(
+            df_general_cluster,
+            x="ciudad",
+            y="salario_media",
+            color="Cluster",
+            color_discrete_map=colores,
+            title="Clustering con DBSCAN",
+            labels={"ciudad": "Ciudad", "salario_media": "Salario Medio"}
+        )
+        st.plotly_chart(fig_dbscan)
+    # Botón para mostrar la comparación de medias por cluster
+    if st.button("Mostrar comparación de medidas por Cluster"):
+        st.session_state.show_mean_comparison = True
+    # Mostrar la comparación de medias por cluster
+    if st.session_state.show_mean_comparison:
+        st.markdown("<h3 style='text-align: center;'>Comparación de valores medios por Cluster:</h3>", unsafe_allow_html=True)
+        df_grouped = df_general_cluster.groupby(by="Cluster").mean().T
+        df_long = df_grouped.reset_index().melt(id_vars="index", var_name="Cluster", value_name="Valor")
+        fig_mean = px.bar(
+            df_long,
+            x="index",
+            y="Valor",
+            color="Cluster",
+            color_discrete_sequence=list(colores.values()),
+            barmode="group",
+            labels={"index": "Características", "Valor": "Valor Medio"},
+            title="Comparación de valores medios por Cluster"
+        )
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.plotly_chart(fig_mean, use_container_width=True)
+        with col2:
+            st.dataframe(df_grouped)
+    
 def arquitectura_sql():
     ##Titulos
     st.markdown(
     """
     <div style="text-align: center;">
-        <h1>ARQUITECTURA SQL<h1>
+        <h1>ARQUITECTURA SQL ⛁</h1>
         <h3>Así se ha estructurado nuestros datos</h3>
         <p style="font-size: 18px;">
             - Conoce la relación de nuestros datos para la extracción de información -
@@ -577,7 +908,11 @@ def arquitectura_sql():
     
     st.write("---------------------------------------------")
     
-    st.image("../DIAGRAMA_SQL.drawio.png", width=900)
+    st.image("/home/bosser/Documentos/PFB-Empleo/DIAGRAMA_SQL.png", width=900)
+
+    st.write("-----------------------------------------------")
+
+    st.write("En nuestra base de datos SQL, las relaciones conectan tablas entre sí. Las relaciones más comunes son: uno a uno, uno a muchos y muchos a muchos. Las claves primarias identifican de manera única los registros, mientras que las claves foráneas vinculan tablas relacionadas. Las relaciones permiten realizar consultas complejas usando JOIN para combinar datos de varias tablas. Este enfoque garantiza la integridad y eficiencia de la base de datos.")
     
 
 def about_us():
@@ -685,7 +1020,7 @@ def about_us():
             }}
         </style>
         <div class="circle-container">
-            <img src="https://media.licdn.com/dms/image/v2/D4D35AQG5hLgxvtx7SA/profile-framedphoto-shrink_200_200/B4DZVYJJPyG8AY-/0/1740940547326?e=1741629600&v=beta&t=QAM6NUInIxCpraohRVAWjQE9gbK9W_6Kpm3IUQ6SZrM" class="circle-img">
+            <img src="https://i.imgur.com/eLBwCXj.jpeg" class="circle-img">
             <br>
             <a href="https://www.linkedin.com/in/liam-gonzalez-villar-2994aa248" class="linkedin-link" target="_blank">-LinkedIn-</a>
         </div>
@@ -700,7 +1035,7 @@ def about_us():
                     text-align: center;
                 }
                 .main-title-white {{
-                font-size: 40px;
+                font-size: 50px;
                 font-weight: bold;
                 margin-bottom: 5px;
                 color: white; /* Solo para este título */
@@ -711,7 +1046,7 @@ def about_us():
                 }
             </style>
             <div class="title-container">
-                <p class="main-title">Luis Martínez de la Riva</p>
+                <p class="main-title">Luis Martínez de la Riva Doallo</p>
                 <p class="subtitle">Data Analyst</p>
             </div>
             """,
@@ -744,7 +1079,7 @@ def about_us():
             }}
         </style>
         <div class="circle-container">
-            <img src="https://media.licdn.com/dms/image/v2/D4D35AQG5hLgxvtx7SA/profile-framedphoto-shrink_200_200/B4DZVYJJPyG8AY-/0/1740940547326?e=1741629600&v=beta&t=QAM6NUInIxCpraohRVAWjQE9gbK9W_6Kpm3IUQ6SZrM" class="circle-img">
+            <img src="https://media.licdn.com/dms/image/v2/D5603AQEK5WIc8prgEQ/profile-displayphoto-shrink_200_200/B56ZV_TsohHoAY-/0/1741597625372?e=1747267200&v=beta&t=1EHrFoRLCBGPFJ2I3P_n3JYhXf9wDBs1LAfTYzuXUrQ" class="circle-img">
             <br>
             <a href="https://www.linkedin.com/in/raquel-barbeito-garcia-783497319/" class="linkedin-link" target="_blank">-LinkedIn-</a>
         </div>
@@ -836,14 +1171,352 @@ def about_us():
             unsafe_allow_html=True
         )
 
+    st.write("----------------------------------------------")
+
+
+    # URL del repositorio
+    repo_url = "https://github.com/LiamGVillar/PFB-Empleo"
+
+    # URL de la imagen del logo de GitHub
+    github_logo_url = "https://pngimg.com/d/github_PNG71.png"
+
+    st.markdown("""
+        <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+            <a href="{}" target="_blank">
+                <button style="border: none; background: transparent; cursor: pointer;">
+                    <img src="{}" alt="GitHub Logo" style="width: 100px; height: 100px;"/>
+                </button>
+            </a>
+            <p style="text-align: center; font-size: 16px; color: #440;">Visita nuestro repositorio de GitHub</p>
+        </div>
+    """.format(repo_url, github_logo_url), unsafe_allow_html=True)
+
+
+
     st.write("---------------------------------------------------")
     st.write("Somos un equipo apasionado por la innovación y el análisis de datos, comprometido con ofrecer soluciones tecnológicas que faciliten la toma de decisiones informadas. Nuestra misión es proporcionar herramientas intuitivas y poderosas que permitan a nuestros usuarios explorar, comprender y utilizar los datos de manera eficiente. Con un enfoque en la simplicidad y la eficacia, nos esforzamos por crear experiencias que transformen la forma en que las personas interactúan con la información, impulsando el éxito tanto en el ámbito profesional como personal.")
 
 
+def predictor ():
+    
+    st.title("Calculadora de Salario para Creación de Ofertas de Empleo")
 
+    # Agregamos un identificador a la caja de contraseña
+    password = st.text_input("Introduce la contraseña:", type="password", key="password_input_1")
+    correct_password = "faltalogaritmo_siu"
 
+    if password != correct_password:
+        if password:  # Solo muestra el error si el usuario ha intentado introducir una contraseña
+            st.error(":x: Acceso restringido a usuarios registrados. Contacta con soporte para crear tu cuenta profesional.")
+            # CSS vibración si contraseña es incorrecta.
+            st.markdown(
+                """
+                <style>
+                @keyframes shake {
+                    0% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    50% { transform: translateX(5px); }
+                    75% { transform: translateX(-5px); }
+                    100% { transform: translateX(0); }
+                }
+                .stTextInput input {
+                    animation: shake 0.3s ease-in-out;
+                    border: 2px solid red !important;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+        return  # Salir de la función si la contraseña es incorrecta
 
+    # Si la contraseña es correcta, ejecutar el resto del código
+    df_general = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/Calculadora/df_imputado.csv")
+    objects_loaded = joblib.load('/home/bosser/Documentos/PFB-Empleo/presentacion/transformers_and_model.pkl')
+    encoder, scaler, imputer, model = objects_loaded['encoder'], objects_loaded['scaler'], objects_loaded['imputer'], objects_loaded['model']
 
+    # Subtítulo de la sección
+    st.subheader('Introduce los datos de la oferta que deseas publicar para comprobar el salario estimado según nuestra base de datos.')
+
+    # Dividimos la página en tres columnas
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        ciudad = st.selectbox(
+            'Ciudad',
+            ['Madrid', '100% Remoto', 'Barcelona', 'Valencia', 'Málaga', 'Bizkaia', 'Zaragoza', 'A Coruña', 'Sevilla', 'Gipuzkoa', 'No Especificado', 'Alicante', 'Valladolid', 'Pontevedra', 'Navarra', 'Asturias', 'Castellón', 'Álava', 'Girona', 'Baleares', 'Cantabria', 'La Rioja', 'Córdoba'],
+            key="ciudad_selectbox"
+        )
+        jornada_tipo = st.selectbox(
+            'Tipo de jornada laboral',
+            ['Jornada Completa', 'Media Jornada', 'Flexible', 'Intensiva Mañana', 'Turno Rotatorio'],
+            key="jornada_tipo_selectbox"
+        )
+        experiencia = st.slider(
+            'Experiencia requerida (años)',
+            0, 10, 1,
+            key="experiencia_slider"
+        )
+
+    with col2:
+        funciones = st.selectbox(
+            'Funciones:',
+            ['Programador', 'Consultor', 'Analista Programador', 'Ingenieros/Industria', 'Big Data', 'Jefe de Proyecto', 'Ciberseguridad', 'Analista', 'Técnico de Sistemas', 'Arquitecto TIC', 'Desarrollador Web', 'Marketing', 'DevOps', 'Administrador', 'Soporte Técnico', 'Tester', 'Redes', 'Jefe de Equipo', 'Electrónica', 'Helpdesk', 'Desarrollador Móvil', 'Base de Datos/DBA', 'Inteligencia Artificial/Machine Learning', 'Diseño gráfico', 'Sistemas de Calidad', 'Técnico de Gestión', 'Responsable de Producto', 'Comercial', 'Auditor', 'I+D'],
+            key="funciones_selectbox"
+        )
+        contrato_tipo = st.selectbox(
+            'Tipo de contrato',
+            ['Indefinido', 'Temporal', 'Prácticas', 'Freelance/Autónomo'],
+            key="contrato_tipo_selectbox"
+        )
+        nivel_profesional = st.selectbox(
+            'Nivel profesional',
+            ['Empleado', 'Especialista', 'Mando Intermedio', 'Director'],
+            key="nivel_profesional_selectbox"
+        )
+
+    with col3:
+        formacion_minima = st.selectbox(
+            'Formación mínima requerida:',
+            ['FP2/Grado Superior', 'Grado Medio', 'Ingeniero Técnico', 'Sin estudios', 'Grado EEES (Bolonia)', 'E.S.O. (Educación Secundaria Obligatoria)', 'Ingeniero Superior', 'FP1', 'Licenciado', 'Bachillerato/COU', 'Postgrado EEES (Máster)', 'Diplomado', 'Otros títulos, certificaciones y carnets', 'Certificado de Profesionalidad', 'Otra Formación Tecnológica', 'Doctorado'],
+            key="formacion_minima_selectbox"
+        )
+        idioma = st.selectbox(
+            'Idiomas requeridos:',
+            ['--','Inglés', 'Español', 'Catalán', 'Francés', 'Alemán', 'Italiano', 'Euskera', 'Noruego'],
+            key="idioma_selectbox"
+        )
+        teletrabajo = st.selectbox(
+            'Teletrabajo',
+            ['Presencial', 'Híbrido', 'Remoto'],
+            key="teletrabajo_selectbox"
+        )
+
+    # Añadir tecnología y habilidades en la parte de abajo
+    tecnologias = st.multiselect(
+        'Tecnologías requeridas:',
+        ['sap ewm', 'python', 'sql', 'AWS', 'JavaScript', 'Python', 'peoplesoft', 'Docker', 'aws', 'React'],
+        key="tecnologias_multiselect"
+    )
+    habilidades = st.multiselect(
+        'Habilidades requeridas:',
+        ['Programador', 'Proactividad', 'Trabajo en equipo', 'Aprendizaje Continuo', 'Capacidad de autogestión'],
+        key="habilidades_multiselect"
+    )
+
+    # Continuar con la lógica para predecir el salario y demás funcionalidades
+    vacaciones_moda = df_general['vacaciones'].mode()[0]
+    # Crear el dataframe de entrada del usuario
+    user_input = pd.DataFrame({
+        'variable': [0],
+        'vacaciones': [vacaciones_moda],
+        'teletrabajo': [teletrabajo],
+        'jornada_tipo': [jornada_tipo],
+        'funciones': [funciones],
+        'contrato_tipo': [contrato_tipo],
+        'nivel_profesional': [nivel_profesional],
+        'formacion_minima': [formacion_minima],
+        'personas_a_cargo': [0],
+        'experiencia': [experiencia],
+        'idioma': [-1 if idioma == 'Ningún idioma' else idioma],  # Asignar -1 si no se selecciona ningún idioma
+        'ciudad': [ciudad]
+    }, index=[0])
+    # Añadimos tecnologías y habilidades
+    for tech in ['sap ewm', 'python', 'sql', 'AWS', 'JavaScript', 'Python', 'peoplesoft', 'Docker', 'aws', 'React']:
+        user_input[tech] = 1 if tech in tecnologias else 0
+    for habilidad in ['Programador', 'Proactividad', 'Trabajo en equipo', 'Aprendizaje Continuo', 'Capacidad de autogestión']:
+        user_input[habilidad] = 1 if habilidad in habilidades else 0
+    #encoder
+    for column in encoder.keys():
+        if column in user_input.columns:
+            if isinstance(encoder[column], dict):  # Si es un mapeo de categorías
+                user_input[column] = user_input[column].map(encoder[column])
+            elif encoder[column] is not None:  # Si hay un valor específico (como la moda de 'vacaciones')
+                user_input[column] = encoder[column]
+    expected_columns = scaler.feature_names_in_
+    missing_columns = [col for col in expected_columns if col not in user_input.columns]
+    for col in missing_columns:
+        user_input[col] = 0  # Añadir columnas faltantes con valores por defecto
+    user_input = user_input[expected_columns]
+    #scaler
+    user_input_scaled = scaler.transform(user_input)
+    #imputer
+    user_input_imputed = imputer.transform(user_input_scaled)
+    user_input_imputed = np.delete(user_input_imputed, 0, axis=1) #eliminamos la columna salario, generada aleatoriamente, para poder usar el modelo.
+    # Predicción
+    if st.button('Predecir Salario'):
+        salario_predicho = model.predict(user_input_imputed)
+        # Desescalar salario
+        salario_min = scaler.data_min_[0]  # Valor mínimo del scaler para la primera característica
+        salario_max = scaler.data_max_[0]  # Valor máximo del scaler para la primera característica
+        salario_range = salario_max - salario_min
+        # Escala inversa:
+        # Desescalamos usando la fórmula inversa de MinMaxScaler
+        salario_predicho_desescalado = salario_predicho * salario_range + salario_min
+        mensaje_placeholder = st.empty()  # Espacio reservado para el mensaje
+        for i in range(5):  # Repite 4 veces la animación (puedes ajustar)
+            puntos = "." * i
+            mensaje_placeholder.write(f"⌛: Calculando el salario adecuado según los parámetros{puntos}")
+            time.sleep(1)  # Pequeña pausa para el efecto
+        # Mostrar el resultado final
+        mensaje_placeholder.write(f"✅: La estimación del salario para una oferta con las características introducidas es: {salario_predicho_desescalado[0] * 1000:,.0f} €")
+
+# Cargar los modelos entrenados
+with open('/home/bosser/classifier.pkl', 'rb') as f:
+    clf = pickle.load(f)
+
+with open('/home/bosser/dbscan_model.pkl', 'rb') as f:
+    dbscan = pickle.load(f)
+
+expected_columns = clf.feature_names_in_
+
+def predecir_cluster():
+
+    st.markdown("<h1 style='text-align: center;'>Calculadora de Cluster para Creación de Ofertas de Empleo</h1>", unsafe_allow_html=True)
+    # Agregamos un identificador a la caja de contraseña
+    password = st.text_input("Introduce la contraseña:", type="password", key="password_input")
+    correct_password = "faltalogaritmo_siu"
+    if password != correct_password:
+        if password:  # Solo muestra el error si el usuario ha intentado introducir una contraseña
+            st.error(":x: Acceso restringido a usuarios registrados. Contacta con soporte para crear tu cuenta profesional.")
+            # CSS vibración si contraseña es incorrecta.
+            st.markdown(
+                """
+                <style>
+                @keyframes shake {
+                    0% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    50% { transform: translateX(5px); }
+                    75% { transform: translateX(-5px); }
+                    100% { transform: translateX(0); }
+                }
+                .stTextInput input {
+                    animation: shake 0.3s ease-in-out;
+                    border: 2px solid red !important;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+        return  # Salir de la función si la contraseña es incorrecta
+    # Si la contraseña es correcta, ejecutar el resto del código
+    df_general = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/presentacion/df_imputado_final.csv")
+    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/encoder.pkl", "rb") as f:
+        encoder = dill.load(f)
+    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/scaler.pkl", "rb") as f:
+        scaler = pickle.load(f)
+    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/imputer.pkl", "rb") as f:
+        imputer = pickle.load(f)
+    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/modelo_regresion.pkl", "rb") as f:
+        model = pickle.load(f)
+    st.markdown("<h1 style='text-align: center; font-size: 22px;'>Introduce los datos de la oferta que deseas publicar para saber a qué cluster pertenece</h1>", unsafe_allow_html=True)
+    # Nuevos inputs
+    # Crear columnas para los sliders
+    col1, col2 = st.columns(2)
+    with col1:
+        salario_media = st.slider(
+            'Salario anual',
+            0, 154000, 40000,  # Rango de 0 a 154000, valor inicial 40000
+            key="salario_media_slider"
+        )
+    with col2:
+        experiencia = st.slider(
+            'Experiencia requerida (años)',
+            0, 10, 1,  # Rango de 0 a 10, valor inicial 1
+            key="experiencia_slider"
+        )
+    # Crear columnas para los select boxes y multiselects
+    col3, col4, col5 = st.columns(3)
+    with col3:
+        teletrabajo = st.selectbox(
+            'Teletrabajo',
+            ['Presencial', 'Híbrido', 'Remoto'],
+            key="teletrabajo_selectbox"
+        )
+        ciudad = st.selectbox(
+            'Ciudad',
+            ['Madrid', '100% Remoto', 'Barcelona', 'Valencia', 'Málaga', 'Bizkaia', 'Zaragoza', 'A Coruña', 'Sevilla', 'Gipuzkoa', 'No Especificado', 'Alicante', 'Valladolid', 'Pontevedra', 'Navarra', 'Asturias', 'Castellón', 'Álava', 'Girona', 'Baleares', 'Cantabria', 'La Rioja', 'Córdoba'],
+            key="ciudad_selectbox"
+        )
+        tecnologias = st.multiselect(
+            'Tecnologías requeridas:',
+            ['sap ewm', 'python', 'sql', 'AWS', 'JavaScript', 'Python', 'peoplesoft', 'Docker', 'aws', 'React'],
+            key="tecnologias_multiselect"
+        )
+    with col4:
+        jornada_tipo = st.selectbox(
+            'Tipo de jornada laboral',
+            ['Jornada Completa', 'Media Jornada', 'Flexible', 'Intensiva Mañana', 'Turno Rotatorio'],
+            key="jornada_tipo_selectbox"
+        )
+        funciones = st.selectbox(
+            'Funciones:',
+            ['Programador', 'Consultor', 'Analista Programador', 'Ingenieros/Industria', 'Big Data', 'Jefe de Proyecto', 'Ciberseguridad', 'Analista', 'Técnico de Sistemas', 'Arquitecto TIC', 'Desarrollador Web', 'Marketing', 'DevOps', 'Administrador', 'Soporte Técnico', 'Tester', 'Redes', 'Jefe de Equipo', 'Electrónica', 'Helpdesk', 'Desarrollador Móvil', 'Base de Datos/DBA', 'Inteligencia Artificial/Machine Learning', 'Diseño gráfico', 'Sistemas de Calidad', 'Técnico de Gestión', 'Responsable de Producto', 'Comercial', 'Auditor', 'I+D'],
+            key="funciones_selectbox"
+        )
+        habilidades = st.multiselect(
+            'Habilidades requeridas:',
+            ['Programador', 'Proactividad', 'Trabajo en equipo', 'Aprendizaje Continuo', 'Capacidad de autogestión'],
+            key="habilidades_multiselect"
+        )
+    with col5:
+        contrato_tipo = st.selectbox(
+            'Tipo de contrato',
+            ['Indefinido', 'Temporal', 'Prácticas', 'Freelance/Autónomo'],
+            key="contrato_tipo_selectbox"
+        )
+        nivel_profesional = st.selectbox(
+            'Nivel profesional',
+            ['Empleado', 'Especialista', 'Mando Intermedio', 'Director'],
+            key="nivel_profesional_selectbox"
+        )
+        formacion_minima = st.selectbox(
+            'Formación mínima requerida:',
+            ['FP2/Grado Superior', 'Grado Medio', 'Ingeniero Técnico', 'Sin estudios', 'Grado EEES (Bolonia)', 'E.S.O. (Educación Secundaria Obligatoria)', 'Ingeniero Superior', 'FP1', 'Licenciado', 'Bachillerato/COU', 'Postgrado EEES (Máster)', 'Diplomado', 'Otros títulos, certificaciones y carnets', 'Certificado de Profesionalidad', 'Otra Formación Tecnológica', 'Doctorado'],
+            key="formacion_minima_selectbox"
+        )
+    # Crear el dataframe de entrada del usuario
+    user_input = pd.DataFrame({
+        'salario_media': [salario_media // 1000],
+        'experiencia': [experiencia],
+        'teletrabajo': [teletrabajo],
+        'ciudad': [ciudad],
+        'jornada_tipo': [jornada_tipo],
+        'funciones': [funciones],
+        'contrato_tipo': [contrato_tipo],
+        'nivel_profesional': [nivel_profesional],
+        'formacion_minima': [formacion_minima],
+        'num_tecnologias': [len(tecnologias)],  # Contar el número de tecnologías seleccionadas
+        'num_habilidades': [len(habilidades)]   # Contar el número de habilidades seleccionadas
+    }, index=[0])
+    # Aplicar el encoder
+    for column in encoder.keys():
+        if column in user_input.columns:
+            if isinstance(encoder[column], dict):  # Si es un mapeo de categorías
+                user_input[column] = user_input[column].map(encoder[column])
+            elif callable(encoder[column]):  # Si es una función lambda
+                user_input[column] = encoder[column](user_input)
+            elif encoder[column] is not None:  # Si hay un valor específico
+                user_input[column] = encoder[column]
+    # Asegurar que las columnas estén en el orden correcto
+    expected_columns = scaler.feature_names_in_
+    missing_columns = [col for col in expected_columns if col not in user_input.columns]
+    for col in missing_columns:
+        user_input[col] = 0  # Añadir columnas faltantes con valores por defecto
+    user_input = user_input[expected_columns]
+    # Aplicar el scaler
+    user_input_scaled = scaler.transform(user_input)
+    # Aplicar el imputer
+    user_input_imputed = imputer.transform(user_input_scaled)
+    # Predicción del cluster
+    if st.button('Predecir Cluster'):
+        cluster_predicho = model.predict(user_input_imputed)
+        st.success(f'El cluster predicho es: {cluster_predicho[0]}')
+        if cluster_predicho[0] == 0:
+            st.write('Representa la mayor parte del mercado laboral IT, con roles técnicos operativos y de soporte, generalmente a jornada completa y con salarios más bajos. Es el punto de entrada ideal para profesionales junior o aquellos que buscan estabilidad en funciones generales de IT.')
+        elif cluster_predicho[0] == 1:
+            st.write('Se enfoca en perfiles altamente especializados con salarios más altos y una fuerte presencia del teletrabajo. Es el más atractivo para profesionales con experiencia en desarrollo de software, ciberseguridad o consultoría IT.')
+        elif cluster_predicho[0] == 2:
+            st.write('Comprende roles críticos de infraestructura IT con disponibilidad 24/7, demandando experiencia avanzada. Aunque menos frecuente, es esencial en sectores que requieren supervisión constante, como telecomunicaciones, finanzas y salud.')
 
 
 
@@ -865,6 +1538,7 @@ st.markdown(
 if 'page' not in st.session_state:
     st.session_state.page = "🏠"
 
+
 pages = {
     "🏠" : pagina_principal,
     "Muestra de datos" : muestra_datos,
@@ -872,14 +1546,19 @@ pages = {
     "Informacion PBI" : informacion_pbi,
     "Clustering y Clasificación" : clustering_clasificacion,
     "Arquitectura de SQL" : arquitectura_sql,
-    "About us" : about_us
+    "About us" : about_us,
+    "Calculadora de salario 💎" : predictor,
+    "Calculadora de cluster 💎" : predecir_cluster
 }
 
+if st.session_state.page not in pages.keys():
+    st.session_state.page = "🏠"
 
-manfredimg = Image.open("../Streamlit_test/imagenes/manfred.png")
-tecnoempleoimg = Image.open("../Streamlit_test/imagenes/tecnoempleo.png")
 
-st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_column_width=True)
+manfredimg = Image.open("Streamlit_test/imagenes/manfred.png")
+tecnoempleoimg = Image.open("Streamlit_test/imagenes/tecnoempleo.png")
+
+st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_container_width=True)
 
 # Función para convertir imagen a base64
 def img_to_base64(image):
@@ -933,8 +1612,20 @@ if selected_page != st.session_state.page:
 
 pages[st.session_state.page]()
 
+# Botón "Predecir" (Calculadora de salario)
+st.sidebar.markdown('<p style="color: black;">Opción disponible para usuarios Premium</p>', unsafe_allow_html=True)
+if st.sidebar.button("Calculadora de salario 💎"):
+    st.session_state.page = "Calculadora de salario 💎"  # Actualiza la página para mostrar la predicción
+    st.rerun()  # Refresca la app para que se actualicen los cambios
 
-st.sidebar.markdown("<br>" * 12, unsafe_allow_html=True)
+# Botón "Predecir" (Calculadora de cluster)
+if st.sidebar.button("Calculadora de cluster 💎"):
+    st.session_state.page = "Calculadora de cluster 💎"  # Actualiza la página para mostrar la predicción
+    st.rerun()  # Refresca la app para que se actualicen los cambios
+
+
+
+st.sidebar.markdown("<br>" * 9, unsafe_allow_html=True)
 st.sidebar.markdown(
     '<p style="color: black;">App en versión de pruebas</p>',
     unsafe_allow_html=True
