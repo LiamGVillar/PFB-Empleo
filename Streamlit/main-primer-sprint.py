@@ -42,7 +42,7 @@ st.markdown(
 
 def pagina_principal():
     
-    st.image("/home/bosser/Descargas/portada.jpg", width=1850)
+    st.image("Streamlit/Data/portada.jpg", width=1850)
 
     st.write("---------------------------------------------------------------------------------------------------------------")
 
@@ -158,9 +158,9 @@ def muestra_datos():
 )
 
      # Ruta al archivo HTML generado por folium
-    ruta_html_provincias = "mapa_cloropletico_espana.html"
-    ruta_html_calor = "mapa_calor_ciudades.html"
-    ruta_html_comunidades = "mapa_comunidades.html"
+    ruta_html_provincias = "Análisis_visual/Mapas/Htmls_mapas/mapa_cloropletico_espana.html"
+    ruta_html_calor = "Análisis_visual/Mapas/Htmls_mapas/mapa_calor_ciudades.html"
+    ruta_html_comunidades = "Análisis_visual/Mapas/Htmls_mapas/mapa_comunidades.html"
 
 
     mapa_seleccionado = st.selectbox(
@@ -653,15 +653,24 @@ def muestra_datos():
 
     st.write("-------------------------------------------------------------------------------------------------------------------------------------")
 
-    with st.expander(label = "Despliega todas las ofertas", expanded = False):
-        df = pd.read_csv(filepath_or_buffer = "CSV/CSV_finales/ofertas_final.csv")
+    query = "SELECT * FROM ofertas;"
+    with st.expander(label="Despliega todas las ofertas", expanded=False):
+        df = load_data()
         st.dataframe(df)
-   
+
+db_config = st.secrets["database"]
+db = mysql.connector.connect(
+         host=db_config["host"],
+         user=db_config["user"],
+         password=db_config["password"],
+         database=db_config["database"])
+query = "SELECT * FROM ofertas;"  
 @st.cache_data
 def load_data():
-    return pd.read_csv("CSV/CSV_finales/ofertas_final.csv")
-
+    return pd.read_sql(query, db)
 df = load_data()
+
+
 
 def busqueda():
     # Solucion primera al error de refresco
@@ -794,8 +803,8 @@ def clustering_clasificacion():
 )
     
     # Cargar los DataFrames
-    df_general_cluster = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/presentacion/df_imputado_final_clusterizado.csv")
-    df_cluster = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/presentacion/df_clusters.csv")
+    df_general_cluster = pd.read_csv("Clustering_Clasificación/Revision/df_imputado_final_clusterizado.csv")
+    df_cluster = pd.read_csv("Clustering_Clasificación/Revision/df_clusters.csv")
     colores = {
         0: "rgba(46, 139, 87, 0.5)",
         1: "rgba(191, 0, 255, 1)",
@@ -908,7 +917,7 @@ def arquitectura_sql():
     
     st.write("---------------------------------------------")
     
-    st.image("/home/bosser/Documentos/PFB-Empleo/DIAGRAMA_SQL.png", width=900)
+    st.image("Extra_data/DIAGRAMA_SQL.png", width=900)
 
     st.write("-----------------------------------------------")
 
@@ -1230,8 +1239,8 @@ def predictor ():
         return  # Salir de la función si la contraseña es incorrecta
 
     # Si la contraseña es correcta, ejecutar el resto del código
-    df_general = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/Calculadora/df_imputado.csv")
-    objects_loaded = joblib.load('/home/bosser/Documentos/PFB-Empleo/presentacion/transformers_and_model.pkl')
+    df_general = pd.read_csv("Clustering_Clasificación/Revision/df_imputado_final.csv")
+    objects_loaded = joblib.load('Clustering_Clasificación/Revision/transformers_and_model.pkl')
     encoder, scaler, imputer, model = objects_loaded['encoder'], objects_loaded['scaler'], objects_loaded['imputer'], objects_loaded['model']
 
     # Subtítulo de la sección
@@ -1399,14 +1408,14 @@ def predecir_cluster():
             )
         return  # Salir de la función si la contraseña es incorrecta
     # Si la contraseña es correcta, ejecutar el resto del código
-    df_general = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/presentacion/df_imputado_final.csv")
-    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/encoder.pkl", "rb") as f:
+    df_general = pd.read_csv("Clustering_Clasificación/Revision/df_imputado_final.csv")
+    with open("Clustering_Clasificación/Revision/encoder.pkl", "rb") as f:
         encoder = dill.load(f)
-    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/scaler.pkl", "rb") as f:
+    with open("Clustering_Clasificación/Revision/scaler.pkl", "rb") as f:
         scaler = pickle.load(f)
-    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/imputer.pkl", "rb") as f:
+    with open("Clustering_Clasificación/Revision/imputer.pkl", "rb") as f:
         imputer = pickle.load(f)
-    with open("/home/bosser/Documentos/PFB-Empleo/presentacion/modelo_regresion.pkl", "rb") as f:
+    with open("Clustering_Clasificación/Revision/modelo_regresion.pkl", "rb") as f:
         model = pickle.load(f)
     st.markdown("<h1 style='text-align: center; font-size: 22px;'>Introduce los datos de la oferta que deseas publicar para saber a qué cluster pertenece</h1>", unsafe_allow_html=True)
     # Nuevos inputs
@@ -1555,8 +1564,8 @@ if st.session_state.page not in pages.keys():
     st.session_state.page = "🏠"
 
 
-manfredimg = Image.open("Streamlit_test/imagenes/manfred.png")
-tecnoempleoimg = Image.open("Streamlit_test/imagenes/tecnoempleo.png")
+manfredimg = Image.open("Streamlit/Data/manfred.png")
+tecnoempleoimg = Image.open("Streamlit/Data/tecnoempleo.png")
 
 st.sidebar.image("https://cdn.prod.website-files.com/5f3108520188e7588ef687b1/64e7429d8afae2bb6f5acd85_logo-hab-pez.svg", use_container_width=True)
 
