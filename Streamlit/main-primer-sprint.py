@@ -14,7 +14,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import pickle
 import dill
-
+import toml
 import base64
 from io import BytesIO
 
@@ -154,19 +154,17 @@ def muestra_datos():
         -Aquí podrás observar patrones en las ofertas de empleo seleccionadas-
     </p>
     """,
-    unsafe_allow_html=True
-)
+    unsafe_allow_html=True)
 
      # Ruta al archivo HTML generado por folium
-    ruta_html_provincias = "Análisis_visual/Mapas/Htmls_mapas/mapa_cloropletico_espana.html"
-    ruta_html_calor = "Análisis_visual/Mapas/Htmls_mapas/mapa_calor_ciudades.html"
-    ruta_html_comunidades = "Análisis_visual/Mapas/Htmls_mapas/mapa_comunidades.html"
+    ruta_html_provincias = "Streamlit/Data/mapa_cloropletico_espana.html"
+    ruta_html_calor = "Streamlit/Data/mapa_calor_ciudades.html"
+    ruta_html_comunidades = "Streamlit/Data/mapa_comunidades.html"
 
 
     mapa_seleccionado = st.selectbox(
     "Mapas:",
-    ("Ofertas de empleo por provincia", "Ofertas de empleo por ciudad", "Ofertas de empleo por comunidad autónoma")
-)
+    ("Ofertas de empleo por provincia", "Ofertas de empleo por ciudad", "Ofertas de empleo por comunidad autónoma"))
 
 #    Leer el contenido de los archivos HTML
     if mapa_seleccionado == "Ofertas de empleo por provincia":
@@ -187,12 +185,13 @@ def muestra_datos():
 
 
     # Conexión a la base de datos MySQL
-    db_config = st.secrets["database"]
-    db = mysql.connector.connect(
-         host=db_config["host"],
-         user=db_config["user"],
-         password=db_config["password"],
-         database=db_config["database"])
+    config = toml.load(".Streamlit/secrets.toml")
+    db_config = config["database"]
+
+    db = mysql.connector.connect(host=db_config["host"],
+                                user=db_config["user"],
+                                password=db_config["password"],
+                                database=db_config["database"]) 
 
     # Consulta SQL para Tecnologías
     query_tech = """
@@ -244,7 +243,7 @@ def muestra_datos():
     df_skills_filtered = df_skills[df_skills["titulo"].isin(top_titulos_skills)].groupby("titulo").apply(lambda x: x.nlargest(5, "frecuencia")).reset_index(drop=True)
 
     # Configuración de la página Streamlit
-    st.title('Frecuencia de Tecnologías y Habilidades por Puesto de Trabajo')
+    st.title("Frecuencia de Tecnologías y Habilidades por Puesto de Trabajo")
 
     # Dividir la pantalla en dos columnas
     col1, col2 = st.columns(2)
@@ -337,11 +336,9 @@ def muestra_datos():
     fig.update_layout(
         coloraxis=dict(colorscale="Viridis", colorbar=dict(
             title="Salario Promedio (€)",  
-            titleside="top",
-            ticksuffix=" €"
-        )),
-        showlegend=False  # Oculta la leyenda normal, ya que el color representa el salario
-    )
+            title_side="top",
+            ticksuffix=" €")),
+        showlegend=False)
 
     # Mostrar el gráfico en Streamlit
     st.title("Comparativa de Tecnologías y Habilidades Demandadas")
@@ -371,9 +368,9 @@ def muestra_datos():
         o.salario_hasta,
         o.nivel_profesional,
         CASE
-            WHEN o.experiencia IN ('Más de 10 años', 'Más de 5 años') THEN 'Más de 5 años'
-            WHEN o.experiencia IN ('3-5 años', '3 años', '2 años') THEN '2-5 años'
-            ELSE 'Menos de 2 años'
+            WHEN o.experiencia IN ("Más de 10 años", "Más de 5 años") THEN "Más de 5 años"
+            WHEN o.experiencia IN ("3-5 años", "3 años", "2 años") THEN "2-5 años"
+            ELSE "Menos de 2 años"
         END AS experiencia_agrupada
     FROM ofertas o
     JOIN top_niveles tn ON o.nivel_profesional = tn.nivel_profesional
@@ -420,15 +417,15 @@ def muestra_datos():
         legend=dict(
         title=dict(
             text="Años de experiencia:",  
-            font=dict(color='black')  
+            font=dict(color="black")  
         ),
             orientation="v",
             yanchor="top",
             xanchor="right",
             y=1.02,
             x=1.15,
-            bgcolor='rgba(255,255,255,0.9)',
-            font=dict(color='black')
+            bgcolor="rgba(255,255,255,0.9)",
+            font=dict(color="black")
         ),
         hovermode="x unified",
         bargap=0.15,
@@ -460,7 +457,7 @@ def muestra_datos():
     FROM ofertas o
     INNER JOIN ciudades c ON o.id_oferta = c.id_oferta
     INNER JOIN ciudades_coordenadas cc ON c.ciudad = cc.ciudad
-    WHERE cc.pais = 'España'
+    WHERE cc.pais = "España"
     AND o.salario_desde IS NOT NULL 
     AND o.salario_hasta IS NOT NULL
     AND c.ciudad IN (
@@ -473,24 +470,24 @@ def muestra_datos():
     """
 
     df = pd.read_sql(consulta_sql, db)
-    ciudades = df['ciudad'].unique().tolist()
+    ciudades = df["ciudad"].unique().tolist()
 
     fig = go.Figure()
     fig.add_trace(
         go.Box(
-            x=df['ciudad'],
-            y=df['salario_promedio'],
+            x=df["ciudad"],
+            y=df["salario_promedio"],
             visible=True,
-            name='Todas'
+            name="Todas"
         )
     )
 
     for ciudad in ciudades:
-        df_ciudad = df[df['ciudad'] == ciudad]
+        df_ciudad = df[df["ciudad"] == ciudad]
         fig.add_trace(
             go.Box(
-                x=df_ciudad['ciudad'],
-                y=df_ciudad['salario_promedio'],
+                x=df_ciudad["ciudad"],
+                y=df_ciudad["salario_promedio"],
                 visible=False,
                 name=ciudad
             )
@@ -498,9 +495,9 @@ def muestra_datos():
 
     botones = []
     botones.append({
-        'label': 'Todas las ciudades',
-        'method': 'update',
-        'args': [{'visible': [True] + [False]*len(ciudades)}]
+        "label": "Todas las ciudades",
+        "method": "update",
+        "args": [{"visible": [True] + [False]*len(ciudades)}]
     })
 
     for i, ciudad in enumerate(ciudades):
@@ -508,25 +505,25 @@ def muestra_datos():
         visibilidad[i+1] = True
         
         botones.append({
-            'label': ciudad,
-            'method': 'update',
-            'args': [{'visible': visibilidad}]
+            "label": ciudad,
+            "method": "update",
+            "args": [{"visible": visibilidad}]
         })
 
     fig.update_layout(
         updatemenus=[{
-            'buttons': botones,
-            'direction': 'down',
-            'showactive': True,
-            'x': 0.5,
-            'xanchor': 'center',
-            'y': 1.15,
-            'yanchor': 'top'
+            "buttons": botones,
+            "direction": "down",
+            "showactive": True,
+            "x": 0.5,
+            "xanchor": "center",
+            "y": 1.15,
+            "yanchor": "top"
         }],
-        title='Distribución de salarios por ciudad',
+        title="Distribución de salarios por ciudad",
         showlegend=False,
-        xaxis_title='Ciudad',
-        yaxis_title='Salario Promedio (€)'
+        xaxis_title="Ciudad",
+        yaxis_title="Salario Promedio (€)"
     )
 
     st.title("Análisis de Salarios por Ciudad")
@@ -558,10 +555,10 @@ def muestra_datos():
         t.tecnologia AS Tecnologia,
         (o.salario_desde + o.salario_hasta) / 2 AS Salario,
         CASE
-            WHEN o.experiencia IN ('Más de 10 años', 'Más de 5 años') THEN 'Más de 5 años'
-            WHEN o.experiencia IN ('3-5 años', '3 años', '2 años') THEN 'Entre 2 y 5 años'
-            WHEN o.experiencia IN ('1 año', 'Menos de un año', 'Sin Experiencia') THEN 'Menos de 2 años'
-            ELSE 'Otros'
+            WHEN o.experiencia IN ("Más de 10 años", "Más de 5 años") THEN "Más de 5 años"
+            WHEN o.experiencia IN ("3-5 años", "3 años", "2 años") THEN "Entre 2 y 5 años"
+            WHEN o.experiencia IN ("1 año", "Menos de un año", "Sin Experiencia") THEN "Menos de 2 años"
+            ELSE "Otros"
         END AS Experiencia_agrupada
     FROM tecnologias_relacion tr
     JOIN tecnologias t ON tr.tec_id = t.tec_id
@@ -626,17 +623,17 @@ def muestra_datos():
     fig = px.bar(df,
                 x="total_candidatos",
                 y="empresa",
-                orientation='h',
+                orientation="h",
                 color="numero_puestos",
                 title="Relación entre candidatos y puestos por empresa",
                 labels={
-                    'total_candidatos': 'Total candidatos inscritos',
-                    'empresa': '',
-                    'numero_puestos': 'Número de puestos'
+                    "total_candidatos": "Total candidatos inscritos",
+                    "empresa": "",
+                    "numero_puestos": "Número de puestos"
                 })
 
     fig.update_layout(
-        yaxis={'categoryorder': 'total ascending'},
+        yaxis={"categoryorder": "total ascending"},
         coloraxis_colorbar=dict(
             title="Puestos ofertados", 
             title_side="top"
@@ -652,28 +649,61 @@ def muestra_datos():
     " subrayando la necesidad de estrategias diferenciadoras para candidatos y políticas de contratación basadas en datos.")
 
     st.write("-------------------------------------------------------------------------------------------------------------------------------------")
+    config = toml.load(".Streamlit/secrets.toml")
+    db_config = config["database"]
 
-    query = "SELECT * FROM ofertas;"
-    with st.expander(label="Despliega todas las ofertas", expanded=False):
-        df = load_data()
+    db = mysql.connector.connect(
+        host=db_config["host"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database=db_config["database"])
+
+    # Crear un cursor
+    cursor = db.cursor()
+
+    # Consulta SQL
+    query = "SELECT * FROM ofertas"
+
+    # Cargar datos en un DataFrame usando el cursor
+    df = pd.read_sql(query, db)
+
+    # Cerrar la conexión
+    cursor.close()
+    db.close()
+
+    with st.expander(label = "Despliega todas las ofertas", expanded = False):
         st.dataframe(df)
-
-db_config = st.secrets["database"]
-db = mysql.connector.connect(
-         host=db_config["host"],
-         user=db_config["user"],
-         password=db_config["password"],
-         database=db_config["database"])
-query = "SELECT * FROM ofertas;"  
+   
 @st.cache_data
 def load_data():
-    return pd.read_sql(query, db)
-df = load_data()
+    config = toml.load(".Streamlit/secrets.toml")
+    db_config = config["database"]
 
+    db = mysql.connector.connect(
+        host=db_config["host"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database=db_config["database"])
 
+    # Consulta SQL
+    query = "SELECT * FROM ofertas"
 
+    # Cargar los datos en un DataFrame
+    df = pd.read_sql(query, db)
+
+    # Cerrar la conexión a la base de datos
+    db.close()
+
+    # Almacenar el DataFrame en session_state para que sea accesible en toda la aplicación
+    st.session_state.df = df
+
+# Llamar a la función load_data() para cargar los datos en session_state cuando se inicia la app
+if "df" not in st.session_state:
+    load_data()
+
+# Ahora puedes acceder a st.session_state.df en cualquier parte de tu app, por ejemplo:
 def busqueda():
-    # Solucion primera al error de refresco
+    # Asegurarse de que df_filtrado y selected_jobs estén inicializados
     if "selected_jobs" not in st.session_state:
         st.session_state.selected_jobs = []  
     
@@ -709,17 +739,23 @@ def busqueda():
         
         submit_button = st.form_submit_button("Buscar")
 
+    # Cuando se envía el formulario, filtrar los resultados
     if submit_button:
-        # Filtrar los resultados 
-        st.session_state.df_filtrado = df[
-            (df["titulo"].str.lower().str.contains(job_title, na=False)) &
-            (df["ciudad"].str.lower().str.contains(location, na=False)) &
-            (df["empresa"].str.lower().str.contains(company, na=False)) &
-            (df["salario_desde"] >= salario_desde) &
-            (df["salario_hasta"] <= salario_hasta)
+        # Asegurarse de que df está cargado
+        if "df" not in st.session_state or st.session_state.df.empty:
+            st.write("No hay datos disponibles para filtrar.")
+            return
+        
+        # Filtrar df según la búsqueda
+        st.session_state.df_filtrado = st.session_state.df[
+            (st.session_state.df["titulo"].str.lower().str.contains(job_title, na=False)) &
+            (st.session_state.df["ciudad"].str.lower().str.contains(location, na=False)) &
+            (st.session_state.df["empresa"].str.lower().str.contains(company, na=False)) &
+            (st.session_state.df["salario_desde"] >= salario_desde) &
+            (st.session_state.df["salario_hasta"] <= salario_hasta)
         ]
 
-        # Mostrar los resultados
+        # Mostrar resultados
         st.write(f"Resultados para: {job_title} {location} {company} entre {salario_desde}K y {salario_hasta}K/€")
         
         if not st.session_state.df_filtrado.empty:
@@ -727,16 +763,15 @@ def busqueda():
         else:
             st.write("No se encontraron resultados.")
 
-    # Aseguramos datos
-    if 'titulo' not in st.session_state.df_filtrado.columns:
-        st.write("") #Aseguramos que no da error al principio
+    # Aquí puedes continuar con la lógica de trabajo seleccionados y gráficos (como antes)
+    if "titulo" not in st.session_state.df_filtrado.columns:
+        st.write("")  # Evita error si no hay datos filtrados
     else:
-        # Filtramos los trabajos seleccionados para que coincidan con los que están disponibles en df_filtrado
         selected_jobs = [
             job for job in st.session_state.selected_jobs if job in st.session_state.df_filtrado["titulo"].tolist()
         ]
 
-        # Selección múltiple
+        # Selección múltiple para comparar trabajos
         selected_jobs = st.multiselect(
             "Selecciona trabajos para comparar", 
             st.session_state.df_filtrado["titulo"].tolist(), 
@@ -744,25 +779,24 @@ def busqueda():
             format_func=lambda x: f"💼 {x}"
         )
 
-        # Solución buscada para el error de refrescar página
+        # Actualizar trabajos seleccionados
         if selected_jobs != st.session_state.selected_jobs:
             st.session_state.selected_jobs = selected_jobs
 
-        # Filtramos de nuevo el df
+        # Filtrar los trabajos seleccionados y mostrar gráficos
         if selected_jobs:
             df_selected = st.session_state.df_filtrado[st.session_state.df_filtrado["titulo"].isin(selected_jobs)]
 
-            # GRafica01
+            # Comparación de salarios con Plotly
+            import plotly.express as px
             custom_colors = ["#FFA500", "#FFFFFF"]
-
             fig = px.bar(df_selected, 
                         x="titulo", 
                         y=["salario_desde", "salario_hasta"], 
                         title="Comparación de Salarios de los Trabajos Seleccionados",
                         labels={"titulo": "Trabajo", "salario_desde": "Salario Mínimo", "salario_hasta": "Salario Máximo"},
-                        barmode='group',
+                        barmode="group",
                         color_discrete_sequence=custom_colors)
-
             st.plotly_chart(fig, use_container_width=True)
 
     
@@ -785,8 +819,14 @@ def informacion_pbi():
     
     powerbi_width = 600
     powerbi_height = 373.5
-    st.markdown(body = f'<iframe title="Proyecto Final" width="{1400}" height="{850}" src="https://app.powerbi.com/view?r=eyJrIjoiOWQ5NzJkZWEtZjAwZS00MDY4LThhMmUtNDg3ZDJhODFkYTI0IiwidCI6IjVlNzNkZTM1LWU4MjUtNGVkNS1iZTIyLTg4NTYzNTI3MDkxZSIsImMiOjl9&pageName=2c80c0101e4ee066730c" frameborder="0" allowFullScreen="true"></iframe>', unsafe_allow_html=True)
-
+    st.markdown(
+        body=f"""
+        <iframe title="Proyecto Final" width="1400" height="850" 
+        src="https://app.powerbi.com/view?r=eyJrIjoiOWQ5NzJkZWEtZjAwZS00MDY4LThhMmUtNDg3ZDJhODFkYTI0IiwidCI6IjVlNzNkZTM1LWU4MjUtNGVkNS1iZTIyLTg4NTYzNTI3MDkxZSIsImMiOjl9&pageName=2c80c0101e4ee066730c" 
+        frameborder="0" allowFullScreen="true"></iframe>
+        """,
+        unsafe_allow_html=True
+    )
 def clustering_clasificacion():
     ##Titulos
     st.markdown(
@@ -803,8 +843,8 @@ def clustering_clasificacion():
 )
     
     # Cargar los DataFrames
-    df_general_cluster = pd.read_csv("Clustering_Clasificación/Revision/df_imputado_final_clusterizado.csv")
-    df_cluster = pd.read_csv("Clustering_Clasificación/Revision/df_clusters.csv")
+    df_general_cluster = pd.read_csv("Streamlit/Data/df_imputado_final_clusterizado.csv")
+    df_cluster = pd.read_csv("Streamlit/Data/df_clusters.csv")
     colores = {
         0: "rgba(46, 139, 87, 0.5)",
         1: "rgba(191, 0, 255, 1)",
@@ -865,7 +905,7 @@ def clustering_clasificacion():
     # Mostrar la gráfica de DBSCAN
     if st.session_state.get("show_dbscan_plot", False):
         st.markdown("<h3 style='text-align: center;'>Visualización de los clusters generados por DBSCAN:</h3>", unsafe_allow_html=True)
-        df_general_cluster['Cluster'] = df_general_cluster['Cluster'].astype('category')
+        df_general_cluster["Cluster"] = df_general_cluster["Cluster"].astype("category")
         fig_dbscan = px.scatter(
             df_general_cluster,
             x="ciudad",
@@ -917,7 +957,7 @@ def arquitectura_sql():
     
     st.write("---------------------------------------------")
     
-    st.image("Extra_data/DIAGRAMA_SQL.png", width=900)
+    st.image("Streamlit/Data/DIAGRAMA_SQL.png", width=900)
 
     st.write("-----------------------------------------------")
 
@@ -1238,108 +1278,107 @@ def predictor ():
             )
         return  # Salir de la función si la contraseña es incorrecta
 
-    # Si la contraseña es correcta, ejecutar el resto del código
-    df_general = pd.read_csv("Clustering_Clasificación/Revision/df_imputado_final.csv")
-    objects_loaded = joblib.load('Clustering_Clasificación/Revision/transformers_and_model.pkl')
-    encoder, scaler, imputer, model = objects_loaded['encoder'], objects_loaded['scaler'], objects_loaded['imputer'], objects_loaded['model']
+    df_general = pd.read_csv("Streamlit/Data/df_imputado.csv")
+    objects_loaded = joblib.load("Streamlit/Data/transformadores_y_modelo_regresion_salario.pkl")
+    encoder, scaler, imputer, model = objects_loaded["encoder"], objects_loaded["scaler"], objects_loaded["imputer"], objects_loaded["model"]
 
     # Subtítulo de la sección
-    st.subheader('Introduce los datos de la oferta que deseas publicar para comprobar el salario estimado según nuestra base de datos.')
+    st.subheader("Introduce los datos de la oferta que deseas publicar para comprobar el salario estimado según nuestra base de datos.")
 
     # Dividimos la página en tres columnas
     col1, col2, col3 = st.columns(3)
 
     with col1:
         ciudad = st.selectbox(
-            'Ciudad',
-            ['Madrid', '100% Remoto', 'Barcelona', 'Valencia', 'Málaga', 'Bizkaia', 'Zaragoza', 'A Coruña', 'Sevilla', 'Gipuzkoa', 'No Especificado', 'Alicante', 'Valladolid', 'Pontevedra', 'Navarra', 'Asturias', 'Castellón', 'Álava', 'Girona', 'Baleares', 'Cantabria', 'La Rioja', 'Córdoba'],
+            "Ciudad",
+            ["Madrid", "100% Remoto", "Barcelona", "Valencia", "Málaga", "Bizkaia", "Zaragoza", "A Coruña", "Sevilla", "Gipuzkoa", "No Especificado", "Alicante", "Valladolid", "Pontevedra", "Navarra", "Asturias", "Castellón", "Álava", "Girona", "Baleares", "Cantabria", "La Rioja", "Córdoba"],
             key="ciudad_selectbox"
         )
         jornada_tipo = st.selectbox(
-            'Tipo de jornada laboral',
-            ['Jornada Completa', 'Media Jornada', 'Flexible', 'Intensiva Mañana', 'Turno Rotatorio'],
+            "Tipo de jornada laboral",
+            ["Jornada Completa", "Media Jornada", "Flexible", "Intensiva Mañana", "Turno Rotatorio"],
             key="jornada_tipo_selectbox"
         )
         experiencia = st.slider(
-            'Experiencia requerida (años)',
+            "Experiencia requerida (años)",
             0, 10, 1,
             key="experiencia_slider"
         )
 
     with col2:
         funciones = st.selectbox(
-            'Funciones:',
-            ['Programador', 'Consultor', 'Analista Programador', 'Ingenieros/Industria', 'Big Data', 'Jefe de Proyecto', 'Ciberseguridad', 'Analista', 'Técnico de Sistemas', 'Arquitecto TIC', 'Desarrollador Web', 'Marketing', 'DevOps', 'Administrador', 'Soporte Técnico', 'Tester', 'Redes', 'Jefe de Equipo', 'Electrónica', 'Helpdesk', 'Desarrollador Móvil', 'Base de Datos/DBA', 'Inteligencia Artificial/Machine Learning', 'Diseño gráfico', 'Sistemas de Calidad', 'Técnico de Gestión', 'Responsable de Producto', 'Comercial', 'Auditor', 'I+D'],
+            "Funciones:",
+            ["Programador", "Consultor", "Analista Programador", "Ingenieros/Industria", "Big Data", "Jefe de Proyecto", "Ciberseguridad", "Analista", "Técnico de Sistemas", "Arquitecto TIC", "Desarrollador Web", "Marketing", "DevOps", "Administrador", "Soporte Técnico", "Tester", "Redes", "Jefe de Equipo", "Electrónica", "Helpdesk", "Desarrollador Móvil", "Base de Datos/DBA", "Inteligencia Artificial/Machine Learning", "Diseño gráfico", "Sistemas de Calidad", "Técnico de Gestión", "Responsable de Producto", "Comercial", "Auditor", "I+D"],
             key="funciones_selectbox"
         )
         contrato_tipo = st.selectbox(
-            'Tipo de contrato',
-            ['Indefinido', 'Temporal', 'Prácticas', 'Freelance/Autónomo'],
+            "Tipo de contrato",
+            ["Indefinido", "Temporal", "Prácticas", "Freelance/Autónomo"],
             key="contrato_tipo_selectbox"
         )
         nivel_profesional = st.selectbox(
-            'Nivel profesional',
-            ['Empleado', 'Especialista', 'Mando Intermedio', 'Director'],
+            "Nivel profesional",
+            ["Empleado", "Especialista", "Mando Intermedio", "Director"],
             key="nivel_profesional_selectbox"
         )
 
     with col3:
         formacion_minima = st.selectbox(
-            'Formación mínima requerida:',
-            ['FP2/Grado Superior', 'Grado Medio', 'Ingeniero Técnico', 'Sin estudios', 'Grado EEES (Bolonia)', 'E.S.O. (Educación Secundaria Obligatoria)', 'Ingeniero Superior', 'FP1', 'Licenciado', 'Bachillerato/COU', 'Postgrado EEES (Máster)', 'Diplomado', 'Otros títulos, certificaciones y carnets', 'Certificado de Profesionalidad', 'Otra Formación Tecnológica', 'Doctorado'],
+            "Formación mínima requerida:",
+            ["FP2/Grado Superior", "Grado Medio", "Ingeniero Técnico", "Sin estudios", "Grado EEES (Bolonia)", "E.S.O. (Educación Secundaria Obligatoria)", "Ingeniero Superior", "FP1", "Licenciado", "Bachillerato/COU", "Postgrado EEES (Máster)", "Diplomado", "Otros títulos, certificaciones y carnets", "Certificado de Profesionalidad", "Otra Formación Tecnológica", "Doctorado"],
             key="formacion_minima_selectbox"
         )
         idioma = st.selectbox(
-            'Idiomas requeridos:',
-            ['--','Inglés', 'Español', 'Catalán', 'Francés', 'Alemán', 'Italiano', 'Euskera', 'Noruego'],
+            "Idiomas requeridos:",
+            ["--","Inglés", "Español", "Catalán", "Francés", "Alemán", "Italiano", "Euskera", "Noruego"],
             key="idioma_selectbox"
         )
         teletrabajo = st.selectbox(
-            'Teletrabajo',
-            ['Presencial', 'Híbrido', 'Remoto'],
+            "Teletrabajo",
+            ["Presencial", "Híbrido", "Remoto"],
             key="teletrabajo_selectbox"
         )
 
     # Añadir tecnología y habilidades en la parte de abajo
     tecnologias = st.multiselect(
-        'Tecnologías requeridas:',
-        ['sap ewm', 'python', 'sql', 'AWS', 'JavaScript', 'Python', 'peoplesoft', 'Docker', 'aws', 'React'],
+        "Tecnologías requeridas:",
+        ["sap ewm", "python", "sql", "AWS", "JavaScript", "Python", "peoplesoft", "Docker", "aws", "React"],
         key="tecnologias_multiselect"
     )
     habilidades = st.multiselect(
-        'Habilidades requeridas:',
-        ['Programador', 'Proactividad', 'Trabajo en equipo', 'Aprendizaje Continuo', 'Capacidad de autogestión'],
+        "Habilidades requeridas:",
+        ["Programador", "Proactividad", "Trabajo en equipo", "Aprendizaje Continuo", "Capacidad de autogestión"],
         key="habilidades_multiselect"
     )
 
     # Continuar con la lógica para predecir el salario y demás funcionalidades
-    vacaciones_moda = df_general['vacaciones'].mode()[0]
+    vacaciones_moda = df_general["vacaciones"].mode()[0]
     # Crear el dataframe de entrada del usuario
     user_input = pd.DataFrame({
-        'variable': [0],
-        'vacaciones': [vacaciones_moda],
-        'teletrabajo': [teletrabajo],
-        'jornada_tipo': [jornada_tipo],
-        'funciones': [funciones],
-        'contrato_tipo': [contrato_tipo],
-        'nivel_profesional': [nivel_profesional],
-        'formacion_minima': [formacion_minima],
-        'personas_a_cargo': [0],
-        'experiencia': [experiencia],
-        'idioma': [-1 if idioma == 'Ningún idioma' else idioma],  # Asignar -1 si no se selecciona ningún idioma
-        'ciudad': [ciudad]
+        "variable": [0],
+        "vacaciones": [vacaciones_moda],
+        "teletrabajo": [teletrabajo],
+        "jornada_tipo": [jornada_tipo],
+        "funciones": [funciones],
+        "contrato_tipo": [contrato_tipo],
+        "nivel_profesional": [nivel_profesional],
+        "formacion_minima": [formacion_minima],
+        "personas_a_cargo": [0],
+        "experiencia": [experiencia],
+        "idioma": [-1 if idioma == "Ningún idioma" else idioma],  # Asignar -1 si no se selecciona ningún idioma
+        "ciudad": [ciudad]
     }, index=[0])
     # Añadimos tecnologías y habilidades
-    for tech in ['sap ewm', 'python', 'sql', 'AWS', 'JavaScript', 'Python', 'peoplesoft', 'Docker', 'aws', 'React']:
+    for tech in ["sap ewm", "python", "sql", "AWS", "JavaScript", "Python", "peoplesoft", "Docker", "aws", "React"]:
         user_input[tech] = 1 if tech in tecnologias else 0
-    for habilidad in ['Programador', 'Proactividad', 'Trabajo en equipo', 'Aprendizaje Continuo', 'Capacidad de autogestión']:
+    for habilidad in ["Programador", "Proactividad", "Trabajo en equipo", "Aprendizaje Continuo", "Capacidad de autogestión"]:
         user_input[habilidad] = 1 if habilidad in habilidades else 0
     #encoder
     for column in encoder.keys():
         if column in user_input.columns:
             if isinstance(encoder[column], dict):  # Si es un mapeo de categorías
                 user_input[column] = user_input[column].map(encoder[column])
-            elif encoder[column] is not None:  # Si hay un valor específico (como la moda de 'vacaciones')
+            elif encoder[column] is not None:  # Si hay un valor específico (como la moda de "vacaciones")
                 user_input[column] = encoder[column]
     expected_columns = scaler.feature_names_in_
     missing_columns = [col for col in expected_columns if col not in user_input.columns]
@@ -1352,7 +1391,7 @@ def predictor ():
     user_input_imputed = imputer.transform(user_input_scaled)
     user_input_imputed = np.delete(user_input_imputed, 0, axis=1) #eliminamos la columna salario, generada aleatoriamente, para poder usar el modelo.
     # Predicción
-    if st.button('Predecir Salario'):
+    if st.button("Predecir Salario"):
         salario_predicho = model.predict(user_input_imputed)
         # Desescalar salario
         salario_min = scaler.data_min_[0]  # Valor mínimo del scaler para la primera característica
@@ -1369,14 +1408,10 @@ def predictor ():
         # Mostrar el resultado final
         mensaje_placeholder.write(f"✅: La estimación del salario para una oferta con las características introducidas es: {salario_predicho_desescalado[0] * 1000:,.0f} €")
 
-# Cargar los modelos entrenados
-with open('/home/bosser/classifier.pkl', 'rb') as f:
-    clf = pickle.load(f)
 
-with open('/home/bosser/dbscan_model.pkl', 'rb') as f:
+
+with open("Streamlit/Data/dbscan_model.pkl", "rb") as f:
     dbscan = pickle.load(f)
-
-expected_columns = clf.feature_names_in_
 
 def predecir_cluster():
 
@@ -1408,28 +1443,29 @@ def predecir_cluster():
             )
         return  # Salir de la función si la contraseña es incorrecta
     # Si la contraseña es correcta, ejecutar el resto del código
-    df_general = pd.read_csv("Clustering_Clasificación/Revision/df_imputado_final.csv")
-    with open("Clustering_Clasificación/Revision/encoder.pkl", "rb") as f:
+    df_general = pd.read_csv("Streamlit/Data/df_imputado_final.csv")
+    with open("Streamlit/Data/encoder_clustering.pkl", "rb") as f:
         encoder = dill.load(f)
-    with open("Clustering_Clasificación/Revision/scaler.pkl", "rb") as f:
+    with open("Streamlit/Data/scaler_clustering.pkl", "rb") as f:
         scaler = pickle.load(f)
-    with open("Clustering_Clasificación/Revision/imputer.pkl", "rb") as f:
+    with open("Streamlit/Data/imputer_clustering.pkl", "rb") as f:
         imputer = pickle.load(f)
-    with open("Clustering_Clasificación/Revision/modelo_regresion.pkl", "rb") as f:
+    with open("Streamlit/Data/modelo_regresion_clustering.pkl", "rb") as f:
         model = pickle.load(f)
-    st.markdown("<h1 style='text-align: center; font-size: 22px;'>Introduce los datos de la oferta que deseas publicar para saber a qué cluster pertenece</h1>", unsafe_allow_html=True)
-    # Nuevos inputs
+    st.markdown(
+    "<h1 style='text-align: center; font-size: 22px;'>Introduce los datos de la oferta que deseas publicar para saber a qué cluster pertenece</h1>", 
+    unsafe_allow_html=True)
     # Crear columnas para los sliders
     col1, col2 = st.columns(2)
     with col1:
         salario_media = st.slider(
-            'Salario anual',
+            "Salario anual",
             0, 154000, 40000,  # Rango de 0 a 154000, valor inicial 40000
             key="salario_media_slider"
         )
     with col2:
         experiencia = st.slider(
-            'Experiencia requerida (años)',
+            "Experiencia requerida (años)",
             0, 10, 1,  # Rango de 0 a 10, valor inicial 1
             key="experiencia_slider"
         )
@@ -1437,65 +1473,65 @@ def predecir_cluster():
     col3, col4, col5 = st.columns(3)
     with col3:
         teletrabajo = st.selectbox(
-            'Teletrabajo',
-            ['Presencial', 'Híbrido', 'Remoto'],
+            "Teletrabajo",
+            ["Presencial", "Híbrido", "Remoto"],
             key="teletrabajo_selectbox"
         )
         ciudad = st.selectbox(
-            'Ciudad',
-            ['Madrid', '100% Remoto', 'Barcelona', 'Valencia', 'Málaga', 'Bizkaia', 'Zaragoza', 'A Coruña', 'Sevilla', 'Gipuzkoa', 'No Especificado', 'Alicante', 'Valladolid', 'Pontevedra', 'Navarra', 'Asturias', 'Castellón', 'Álava', 'Girona', 'Baleares', 'Cantabria', 'La Rioja', 'Córdoba'],
+            "Ciudad",
+            ["Madrid", "100% Remoto", "Barcelona", "Valencia", "Málaga", "Bizkaia", "Zaragoza", "A Coruña", "Sevilla", "Gipuzkoa", "No Especificado", "Alicante", "Valladolid", "Pontevedra", "Navarra", "Asturias", "Castellón", "Álava", "Girona", "Baleares", "Cantabria", "La Rioja", "Córdoba"],
             key="ciudad_selectbox"
         )
         tecnologias = st.multiselect(
-            'Tecnologías requeridas:',
-            ['sap ewm', 'python', 'sql', 'AWS', 'JavaScript', 'Python', 'peoplesoft', 'Docker', 'aws', 'React'],
+            "Tecnologías requeridas:",
+            ["sap ewm", "python", "sql", "AWS", "JavaScript", "Python", "peoplesoft", "Docker", "aws", "React"],
             key="tecnologias_multiselect"
         )
     with col4:
         jornada_tipo = st.selectbox(
-            'Tipo de jornada laboral',
-            ['Jornada Completa', 'Media Jornada', 'Flexible', 'Intensiva Mañana', 'Turno Rotatorio'],
+            "Tipo de jornada laboral",
+            ["Jornada Completa", "Media Jornada", "Flexible", "Intensiva Mañana", "Turno Rotatorio"],
             key="jornada_tipo_selectbox"
         )
         funciones = st.selectbox(
-            'Funciones:',
-            ['Programador', 'Consultor', 'Analista Programador', 'Ingenieros/Industria', 'Big Data', 'Jefe de Proyecto', 'Ciberseguridad', 'Analista', 'Técnico de Sistemas', 'Arquitecto TIC', 'Desarrollador Web', 'Marketing', 'DevOps', 'Administrador', 'Soporte Técnico', 'Tester', 'Redes', 'Jefe de Equipo', 'Electrónica', 'Helpdesk', 'Desarrollador Móvil', 'Base de Datos/DBA', 'Inteligencia Artificial/Machine Learning', 'Diseño gráfico', 'Sistemas de Calidad', 'Técnico de Gestión', 'Responsable de Producto', 'Comercial', 'Auditor', 'I+D'],
+            "Funciones:",
+            ["Programador", "Consultor", "Analista Programador", "Ingenieros/Industria", "Big Data", "Jefe de Proyecto", "Ciberseguridad", "Analista", "Técnico de Sistemas", "Arquitecto TIC", "Desarrollador Web", "Marketing", "DevOps", "Administrador", "Soporte Técnico", "Tester", "Redes", "Jefe de Equipo", "Electrónica", "Helpdesk", "Desarrollador Móvil", "Base de Datos/DBA", "Inteligencia Artificial/Machine Learning", "Diseño gráfico", "Sistemas de Calidad", "Técnico de Gestión", "Responsable de Producto", "Comercial", "Auditor", "I+D"],
             key="funciones_selectbox"
         )
         habilidades = st.multiselect(
-            'Habilidades requeridas:',
-            ['Programador', 'Proactividad', 'Trabajo en equipo', 'Aprendizaje Continuo', 'Capacidad de autogestión'],
+            "Habilidades requeridas:",
+            ["Programador", "Proactividad", "Trabajo en equipo", "Aprendizaje Continuo", "Capacidad de autogestión"],
             key="habilidades_multiselect"
         )
     with col5:
         contrato_tipo = st.selectbox(
-            'Tipo de contrato',
-            ['Indefinido', 'Temporal', 'Prácticas', 'Freelance/Autónomo'],
+            "Tipo de contrato",
+            ["Indefinido", "Temporal", "Prácticas", "Freelance/Autónomo"],
             key="contrato_tipo_selectbox"
         )
         nivel_profesional = st.selectbox(
-            'Nivel profesional',
-            ['Empleado', 'Especialista', 'Mando Intermedio', 'Director'],
+            "Nivel profesional",
+            ["Empleado", "Especialista", "Mando Intermedio", "Director"],
             key="nivel_profesional_selectbox"
         )
         formacion_minima = st.selectbox(
-            'Formación mínima requerida:',
-            ['FP2/Grado Superior', 'Grado Medio', 'Ingeniero Técnico', 'Sin estudios', 'Grado EEES (Bolonia)', 'E.S.O. (Educación Secundaria Obligatoria)', 'Ingeniero Superior', 'FP1', 'Licenciado', 'Bachillerato/COU', 'Postgrado EEES (Máster)', 'Diplomado', 'Otros títulos, certificaciones y carnets', 'Certificado de Profesionalidad', 'Otra Formación Tecnológica', 'Doctorado'],
+            "Formación mínima requerida:",
+            ["FP2/Grado Superior", "Grado Medio", "Ingeniero Técnico", "Sin estudios", "Grado EEES (Bolonia)", "E.S.O. (Educación Secundaria Obligatoria)", "Ingeniero Superior", "FP1", "Licenciado", "Bachillerato/COU", "Postgrado EEES (Máster)", "Diplomado", "Otros títulos, certificaciones y carnets", "Certificado de Profesionalidad", "Otra Formación Tecnológica", "Doctorado"],
             key="formacion_minima_selectbox"
         )
     # Crear el dataframe de entrada del usuario
     user_input = pd.DataFrame({
-        'salario_media': [salario_media // 1000],
-        'experiencia': [experiencia],
-        'teletrabajo': [teletrabajo],
-        'ciudad': [ciudad],
-        'jornada_tipo': [jornada_tipo],
-        'funciones': [funciones],
-        'contrato_tipo': [contrato_tipo],
-        'nivel_profesional': [nivel_profesional],
-        'formacion_minima': [formacion_minima],
-        'num_tecnologias': [len(tecnologias)],  # Contar el número de tecnologías seleccionadas
-        'num_habilidades': [len(habilidades)]   # Contar el número de habilidades seleccionadas
+        "salario_media": [salario_media // 1000],
+        "experiencia": [experiencia],
+        "teletrabajo": [teletrabajo],
+        "ciudad": [ciudad],
+        "jornada_tipo": [jornada_tipo],
+        "funciones": [funciones],
+        "contrato_tipo": [contrato_tipo],
+        "nivel_profesional": [nivel_profesional],
+        "formacion_minima": [formacion_minima],
+        "num_tecnologias": [len(tecnologias)],  # Contar el número de tecnologías seleccionadas
+        "num_habilidades": [len(habilidades)]   # Contar el número de habilidades seleccionadas
     }, index=[0])
     # Aplicar el encoder
     for column in encoder.keys():
@@ -1517,15 +1553,15 @@ def predecir_cluster():
     # Aplicar el imputer
     user_input_imputed = imputer.transform(user_input_scaled)
     # Predicción del cluster
-    if st.button('Predecir Cluster'):
+    if st.button("Predecir Cluster"):
         cluster_predicho = model.predict(user_input_imputed)
-        st.success(f'El cluster predicho es: {cluster_predicho[0]}')
+        st.success(f"El cluster predicho es: {cluster_predicho[0]}")
         if cluster_predicho[0] == 0:
-            st.write('Representa la mayor parte del mercado laboral IT, con roles técnicos operativos y de soporte, generalmente a jornada completa y con salarios más bajos. Es el punto de entrada ideal para profesionales junior o aquellos que buscan estabilidad en funciones generales de IT.')
+            st.write("Representa la mayor parte del mercado laboral IT, con roles técnicos operativos y de soporte, generalmente a jornada completa y con salarios más bajos. Es el punto de entrada ideal para profesionales junior o aquellos que buscan estabilidad en funciones generales de IT.")
         elif cluster_predicho[0] == 1:
-            st.write('Se enfoca en perfiles altamente especializados con salarios más altos y una fuerte presencia del teletrabajo. Es el más atractivo para profesionales con experiencia en desarrollo de software, ciberseguridad o consultoría IT.')
+            st.write("Se enfoca en perfiles altamente especializados con salarios más altos y una fuerte presencia del teletrabajo. Es el más atractivo para profesionales con experiencia en desarrollo de software, ciberseguridad o consultoría IT.")
         elif cluster_predicho[0] == 2:
-            st.write('Comprende roles críticos de infraestructura IT con disponibilidad 24/7, demandando experiencia avanzada. Aunque menos frecuente, es esencial en sectores que requieren supervisión constante, como telecomunicaciones, finanzas y salud.')
+            st.write("Comprende roles críticos de infraestructura IT con disponibilidad 24/7, demandando experiencia avanzada. Aunque menos frecuente, es esencial en sectores que requieren supervisión constante, como telecomunicaciones, finanzas y salud.")
 
 
 
@@ -1544,7 +1580,7 @@ st.markdown(
 )
 
 # Inicializar el estado de la página
-if 'page' not in st.session_state:
+if "page" not in st.session_state:
     st.session_state.page = "🏠"
 
 
@@ -1580,11 +1616,18 @@ def img_to_base64(image):
 col1, col2 = st.sidebar.columns(2)
 
 with col1:
-    st.markdown(f'<a href="{manfred_url}" target="_blank"><img src="data:image/png;base64,{img_to_base64(manfredimg)}" width="100%"></a>', unsafe_allow_html=True)
+    st.markdown(
+    f'<a href="{manfred_url}" target="_blank">'
+    f'<img src="data:image/png;base64,{img_to_base64(manfredimg)}" width="100%"></a>',
+    unsafe_allow_html=True
+)
 
 # Enlace y mostrar imagen para la columna 2 (Tecnoempleo)
 with col2:
-    st.markdown(f'<a href="{tecnoempleo_url}" target="_blank"><img src="data:image/png;base64,{img_to_base64(tecnoempleoimg)}" width="100%"></a>', unsafe_allow_html=True)
+    st.markdown(
+        f'<a href="{tecnoempleo_url}" target="_blank">'
+        f'<img src="data:image/png;base64,{img_to_base64(tecnoempleoimg)}" width="100%"></a>',
+        unsafe_allow_html=True)
 
 
 st.sidebar.markdown(
@@ -1622,7 +1665,7 @@ if selected_page != st.session_state.page:
 pages[st.session_state.page]()
 
 # Botón "Predecir" (Calculadora de salario)
-st.sidebar.markdown('<p style="color: black;">Opción disponible para usuarios Premium</p>', unsafe_allow_html=True)
+st.sidebar.markdown("<p style='color: black;'>Opción disponible para usuarios Premium</p>", unsafe_allow_html=True)
 if st.sidebar.button("Calculadora de salario 💎"):
     st.session_state.page = "Calculadora de salario 💎"  # Actualiza la página para mostrar la predicción
     st.rerun()  # Refresca la app para que se actualicen los cambios
@@ -1636,6 +1679,6 @@ if st.sidebar.button("Calculadora de cluster 💎"):
 
 st.sidebar.markdown("<br>" * 9, unsafe_allow_html=True)
 st.sidebar.markdown(
-    '<p style="color: black;">App en versión de pruebas</p>',
+    "<p style='color: black;'>App en versión de pruebas</p>",
     unsafe_allow_html=True
 )
