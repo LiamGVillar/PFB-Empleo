@@ -1229,7 +1229,6 @@ def predictor ():
             )
         return  # Salir de la función si la contraseña es incorrecta
 
-    # Si la contraseña es correcta, ejecutar el resto del código
     df_general = pd.read_csv("/home/bosser/Documentos/PFB-Empleo/Calculadora/df_imputado.csv")
     objects_loaded = joblib.load('/home/bosser/Documentos/PFB-Empleo/presentacion/transformers_and_model.pkl')
     encoder, scaler, imputer, model = objects_loaded['encoder'], objects_loaded['scaler'], objects_loaded['imputer'], objects_loaded['model']
