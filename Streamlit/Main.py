@@ -73,7 +73,7 @@ def pagina_principal():
     with col2:
         st.markdown("<h1 style='color: orange;'>Clústering y Clasificación</h1>", unsafe_allow_html=True)
         st.write("""
-            En este apartado se exploran las técnicas de Clústering y Clasificación, dos enfoques clave en el análisis de datos y aprendizaje automático. 
+            En este apartado se exploran las técnicas de Clustering y Clasificación, dos enfoques clave en el análisis de datos y aprendizaje automático. 
         """)
 
     with col1:
