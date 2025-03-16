@@ -50,30 +50,30 @@ def pagina_principal():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("<h1 style='color: orange;'>Datos y graficas</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color: orange;'>Datos y gráficas</h1>", unsafe_allow_html=True)
         st.write("""
             En este apartado se presentan las gráficas y los datos relevantes que permiten visualizar
             y analizar de manera clara y concisa la información recopilada.
         """)
 
     with col2:
-        st.markdown("<h1 style='color: white;'>Busqueda y comparador de empleos</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color: white;'>Búsqueda y comparador de empleos</h1>", unsafe_allow_html=True)
         st.write("""
             En este apartado se presenta una herramienta diseñada para facilitar la búsqueda y comparación de empleos,
             permitiendo a los usuarios explorar diversas opciones laborales disponibles en el mercado. 
         """)
 
     with col1:
-        st.markdown("<h1 style='color: white;'>Informacion PBI</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color: white;'>Información PBI</h1>", unsafe_allow_html=True)
         st.write("""
             Utilizando Power BI, este comparador presenta visualizaciones dinámicas que te ayudarán a analizar las ofertas según diferentes criterios
                   como ubicación, salario, tipo de contrato y requisitos.
         """)
 
     with col2:
-        st.markdown("<h1 style='color: orange;'>Clustering y Clasificación</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color: orange;'>Clústering y Clasificación</h1>", unsafe_allow_html=True)
         st.write("""
-            En este apartado se exploran las técnicas de Clustering y Clasificación, dos enfoques clave en el análisis de datos y aprendizaje automático. 
+            En este apartado se exploran las técnicas de Clústering y Clasificación, dos enfoques clave en el análisis de datos y aprendizaje automático. 
         """)
 
     with col1:
